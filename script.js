@@ -232,28 +232,33 @@ async function simulateBotTyping(delayForWords, botResponse) {
 async function checkJsonQuestions(question, jsonCategories) {
     try {
         for (const category of jsonCategories) {
-            const response = await fetch(`./${category}.json`);
-if (!response.ok) {
-    throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
-}
+            const response = await fetch(`${category}.json`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
+            }
             const jsonArray = await response.json();
+
             for (const jsonField of jsonArray) {
-                if (question === cleanStringsKeepSpaces(jsonField["question"]).toLowerCase()) {
-                    simulateBotTyping(50, jsonField["answer"]);
-                    let numberOfLetters = countLetters(jsonField["answer"]);
-                    const result = [numberOfLetters, true];
-                    result.intValue = result[0];
-                    result.boolValue = result[1];
-                    return result; // Match found => return true immediately
+                const questionVariants = jsonField["question"].toLowerCase().split('+'); // Split the question string
+                for (const variant of questionVariants) {
+                    if (question.includes(variant)) { // Check if the input includes any variant
+                        console.log(`Match found for question: ${variant}`);
+                        simulateBotTyping(50, jsonField["answer"]);
+                        let numberOfLetters = countLetters(jsonField["answer"]);
+                        const result = [numberOfLetters, true];
+                        result.intValue = result[0];
+                        result.boolValue = result[1];
+                        return result; // Match found => return true immediately
+                    }
                 }
             }
         }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
-        return false; // Return false in case of error
     }
-    return false; // No matches found in questions
+    return false; // No matches found
 }
+
 
 async function findBestAnswer(question, keywordsCategories) {
     try {
