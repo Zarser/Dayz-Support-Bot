@@ -15,6 +15,7 @@ const sendBtn = document.getElementById("sendBtn");
 const popoverButton = document.getElementById("popoverButton");
 const popoverContent = document.getElementById("popoverContent");
 const reportButton = document.getElementById("reportButton");
+const skipButton = document.getElementById("skipButton");
 
 const randomResponses = [
     "I'm here to assist you. If I fail to do so, please use the \"REPORT\" button so the issue can be fixed!",
@@ -83,7 +84,7 @@ async function handleUserInput() {
         }
 
         // Delete the inappropriate message and display a placeholder message
-        displayUserMessage("Message deleted", "color: red; font-weight: bold;" );
+        displayUserMessage("Message deleted", "color: red; font-weight: bold;");
         userInput.value = ""; // Clear the input field
         isBotTyping = true;
         const inappropriateResponses = [
@@ -99,6 +100,7 @@ async function handleUserInput() {
         isBotTyping = false;
         return;
     }
+    
     // Handle greetings
 	const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');	
     if (greetingRegex.test(userMessage)) {
@@ -115,11 +117,11 @@ async function handleUserInput() {
 
     isBotTyping = true;
 
-
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-	// Look for answers based on question
+	
+    // Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
@@ -128,9 +130,6 @@ async function handleUserInput() {
         try {
 			// First check questions
 			let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
-            //
-
-            // let checkQuestionsWordsOccurences = false;
             let checkKeywords = false;
 			if (checkQuestions.boolValue) {
 				numberOfLetters = checkQuestions.intValue;
@@ -141,7 +140,7 @@ async function handleUserInput() {
 				}
 			}
 			// If all fails, give user some random input.
-            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {//&& !checkQuestionsWordsOccurences.boolValue ) {
+            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
                 const randomResponse = getRandomResponse();
 				numberOfLetters = countLetters(randomResponse);
 				await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
@@ -156,8 +155,11 @@ async function handleUserInput() {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
+        skipButton.style.display = "inline-block";  // Show the skip button after bot response
     }
 }
+
+// Send button and Enter key listeners
 sendBtn.addEventListener("click", handleUserInput);				
 userInput.addEventListener("keydown", function(event) {			
     if (event.key === "Enter") {
@@ -167,8 +169,15 @@ userInput.addEventListener("keydown", function(event) {
     }
 });
 
+// Skip button functionality
+skipButton.addEventListener("click", function () {
+    clearInterval(typingInterval);
+    displayBotMessage("Skipped bot response.");
+    skipButton.style.display = "none";  // Hide the skip button after clicking
+    isBotTyping = false;
+});
+
 // Function to display user input after enter/click
-// Helper function to display user input
 function displayUserMessage(message, style = "") {
     const userMessage = `<div class="user-message" style="color: white;"><strong>Creature</strong>: <span style="${style}">${message}</span></div>`;
     chatBox.innerHTML += userMessage;
@@ -211,21 +220,6 @@ async function simulateBotTyping(delayForWords, botResponse) {
             displayResponse();
         }
     }, delayForWords);
-
-    // Create and append skip button to the document body
-    const skipButton = document.getElementById("skipButton");
-    skipButton.textContent = "Skip";
-    skipButton.classList.add("skip-button");
-    document.body.appendChild(skipButton);
-
-    // Event listener to remove typing effect and display full message when skip button is clicked
-    skipButton.addEventListener("click", (event) => {
-        event.stopPropagation();
-        clearInterval(typingInterval);
-        displayResponse();
-        skipButton.style.display = 'none'; // Hide the skip button after clicking
-        console.log("Skip button clicked");
-    });
 }
 
 function cleanStringsKeepSpaces(str) {
@@ -303,4 +297,3 @@ async function findBestAnswer(question, jsonFiles) {
 
     return { boolValue: false, intValue: 0 };
 }
-
