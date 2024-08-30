@@ -89,6 +89,10 @@ function generateResponse(category) {
             "If you’re curious about the time, let’s just say it’s always game time here!",
             "The exact time isn’t available, but let’s focus on the adventure at hand!",
             "While I can’t provide the current time, it’s always a good time for gaming!"
+            "Dont your PC have a clock?"
+            "Sure I can tell you... YOU ARE LATE FOR GAMING!"
+            "We dont need time, we shall live in the virutal world of gaming."
+            "Its time to STFU and game!"
         ];
         return timeResponses[Math.floor(Math.random() * timeResponses.length)];
     }
