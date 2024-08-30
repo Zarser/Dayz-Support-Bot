@@ -156,14 +156,6 @@ async function handleUserInput() {
         isBotTyping = false;
     }
 }
-sendBtn.addEventListener("click", handleUserInput);
-userInput.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        handleUserInput();
-        console.log("Send button clicked");
-    }
-});
 
 // Helper function to display user input after enter/click
 function displayUserMessage(message, style = "") {
@@ -208,8 +200,15 @@ async function simulateBotTyping(delayForWords, botResponse) {
         }
     }, delayForWords);
 
+    // Remove existing skip button if it exists
+    const existingSkipButton = document.getElementById("skipButton");
+    if (existingSkipButton) {
+        existingSkipButton.remove();
+    }
+
     // Create and append skip button to the document body
-    const skipButton = document.getElementById("skipButton");
+    const skipButton = document.createElement("button");
+    skipButton.id = "skipButton";
     skipButton.textContent = "Skip";
     skipButton.classList.add("skip-button");
     document.body.appendChild(skipButton);
@@ -328,9 +327,14 @@ popoverButton.addEventListener("click", function () {
     console.log("Popover button clicked");
 });
 
-// Add event listener for the skip button
-const skipButton = document.getElementById("skipButton");
-skipButton.addEventListener("click", function (event) {
-    event.stopPropagation();
-    // Handle skip button click
+// Add event listener for the send button
+sendBtn.addEventListener("click", handleUserInput);
+
+// Add event listener for the enter key in user input field
+userInput.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        handleUserInput();
+        console.log("Send button clicked");
+    }
 });
