@@ -15,7 +15,6 @@ const sendBtn = document.getElementById("sendBtn");
 const popoverButton = document.getElementById("popoverButton");
 const popoverContent = document.getElementById("popoverContent");
 const reportButton = document.getElementById("reportButton");
-const skipButton = document.getElementById("skipButton");
 
 const randomResponses = [
     "I'm here to assist you. If I fail to do so, please use the \"REPORT\" button so the issue can be fixed!",
@@ -33,6 +32,18 @@ const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigg
 let isBotTyping = false;
 let inappropriateWordCount = 0; // Variable to count inappropriate words
 
+// Add gaming-related weather responses
+const gamingWeatherResponses = [
+    "It's always good weather for gaming!",
+    "No need to worry about the weather when you've got games to play!",
+    "Rain or shine, it's the perfect time for gaming!",
+    "Sunny or not, the real adventure is in the game!",
+    "Why go outside when the best action is on your screen?",
+    "In the gaming world, the weather is always epic!",
+    "No matter the weather, it's always a great day to level up!",
+    "Cold outside? Perfect excuse to stay in and game!"
+];
+
 // Function to get random greeting from the array
 function getRandomGreeting() {
     const randomIndex = Math.floor(Math.random() * greetings.length);
@@ -43,6 +54,25 @@ function getRandomGreeting() {
 function getRandomResponse() {
     const randomIndex = Math.floor(Math.random() * randomResponses.length);
     return randomResponses[randomIndex];
+}
+
+// Function to check for weather-related questions
+function isWeatherRelatedQuestion(userMessage) {
+    const weatherPhrases = [
+        "how's the weather","hows the weater", "is it raining", "is it sunny", "is it cold", 
+        "is it warm", "is it snowing", "is it windy", 
+        "what's the weather like", "whats the weather like", "what's the temperature", "whats the temperature",
+        "how hot is it", "how cold is it", "What's the weather like today", "Whats the weather like today", "What's the weather like in your country",
+        "Whats the weather like in your country"
+    ];
+
+    return weatherPhrases.some(phrase => userMessage.includes(phrase));
+}
+
+// Function to get a random gaming-related weather response
+function getRandomGamingWeatherResponse() {
+    const randomIndex = Math.floor(Math.random() * gamingWeatherResponses.length);
+    return gamingWeatherResponses[randomIndex];
 }
 
 window.onload = async function () {
@@ -59,7 +89,6 @@ function askBot(question) {
 // Main function to handle user input
 async function handleUserInput() {
     if (isBotTyping) {
-        console.log("Bot is typing. Input is temporarily disabled.");
         return;
     }
     const userMessage = userInput.value.trim().toLowerCase();
@@ -84,7 +113,7 @@ async function handleUserInput() {
         }
 
         // Delete the inappropriate message and display a placeholder message
-        displayUserMessage("Message deleted", "color: red; font-weight: bold;");
+        displayUserMessage("Message deleted", "color: red; font-weight: bold;" );
         userInput.value = ""; // Clear the input field
         isBotTyping = true;
         const inappropriateResponses = [
@@ -100,15 +129,27 @@ async function handleUserInput() {
         isBotTyping = false;
         return;
     }
-    
+
+    // Check for weather-related questions
+    if (isWeatherRelatedQuestion(userMessage)) {
+        userInput.value = ""; // Clear the input field
+        displayUserMessage(userMessage);
+        const randomResponse = getRandomGamingWeatherResponse();
+        await simulateBotTyping(50, randomResponse);
+        return;
+    }
+
     // Handle greetings
-    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
+    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');    
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
-        await simulateBotTyping(50, randomGreeting);
-        userInput.value = ""; // Clear the input field
-        isBotTyping = false;
+        simulateBotTyping(50, randomGreeting).then(() => {
+            return new Promise(resolve => setTimeout(resolve, 1000));
+        }).then(() => {
+            isBotTyping = false;
+            userInput.value = ""; // Clear the input field
+        });
         return;
     }
 
@@ -117,26 +158,23 @@ async function handleUserInput() {
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-    
-    // Look for answers based on question
+
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
         let numberOfLetters = 0;
         question = cleanStringsKeepSpaces(question).toLowerCase();
         try {
-            // First check questions
             let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
             let checkKeywords = false;
             if (checkQuestions.boolValue) {
                 numberOfLetters = checkQuestions.intValue;
-            } else { // If no question found in jsons, continue to keywords pairs and hope for the best
+            } else {
                 checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
                 if (checkKeywords.boolValue) {
                     numberOfLetters = checkKeywords.intValue;
                 }
             }
-            // If all fails, give user some random input.
             if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
                 const randomResponse = getRandomResponse();
                 numberOfLetters = countLetters(randomResponse);
@@ -152,11 +190,9 @@ async function handleUserInput() {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
-        skipButton.style.display = "inline-block";  // Show the skip button after bot response
     }
 }
 
-// Send button and Enter key listeners
 sendBtn.addEventListener("click", handleUserInput);                
 userInput.addEventListener("keydown", function(event) {            
     if (event.key === "Enter") {
@@ -166,15 +202,8 @@ userInput.addEventListener("keydown", function(event) {
     }
 });
 
-// Skip button functionality
-skipButton.addEventListener("click", function () {
-    clearInterval(typingInterval);
-    displayBotMessage("Skipped bot response.");
-    skipButton.style.display = "none";  // Hide the skip button after clicking
-    isBotTyping = false;
-});
-
 // Function to display user input after enter/click
+// Helper function to display user input
 function displayUserMessage(message, style = "") {
     const userMessage = `<div class="user-message" style="color: white;"><strong>Creature</strong>: <span style="${style}">${message}</span></div>`;
     chatBox.innerHTML += userMessage;
@@ -195,110 +224,39 @@ function displayBotMessage(message) {
 async function simulateBotTyping(delayForWords, botResponse) {
     const typingElement = document.createElement("div");
     typingElement.classList.add("bot-message", "bot-typing");
+    typingElement.innerHTML = `<img src="bot.png" alt="Robot" class="bot-avatar"><span class="bot-text">...</span>`;
     chatBox.appendChild(typingElement);
-    let currentCharIndex = 0;
-    let typingInterval;
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-    function displayResponse() {
-        clearInterval(typingInterval);
-        if (typingElement.parentElement === chatBox) {
-            chatBox.removeChild(typingElement);
-            displayBotMessage(botResponse);
-            isBotTyping = false; // Ensure isBotTyping is reset
-        }
-    }
-
-    typingInterval = setInterval(() => {
-        if (currentCharIndex <= botResponse.length) {
-            typingElement.innerHTML = `<span class="typing-color">${botResponse.substring(0, currentCharIndex)}</span>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
-            currentCharIndex++;
-        } else {
-            displayResponse();
-        }
-    }, delayForWords);
+    await new Promise(resolve => setTimeout(resolve, delayForWords));
+    typingElement.remove();
+    displayBotMessage(botResponse);
 }
 
+// Function to count letters for typing simulation
+function countLetters(message) {
+    return message.length;
+}
+
+// Function to clean strings for comparison
 function cleanStringsKeepSpaces(str) {
-    return str.replace(/[^a-zA-Z0-9, ]/g, '');
+    return str.replace(/\s+/g, ' ').trim();
 }
 
-function countLetters(str) {
-    const regex = /[a-zA-Z]/g;
-    const lettersArray = str.match(regex);
-    return lettersArray ? lettersArray.length : 0;
-}
-
-// Handle the report button click
-reportButton.addEventListener("click", function () {
-    window.location.href = "report.html";
-});
-
-// Add event listener for popover button
-popoverButton.addEventListener("click", function () {
-    popoverContent.classList.toggle("show");
-});
-
-// Function to check for JSON questions
-async function checkJsonQuestions(question, jsonFiles) {
-    for (const jsonFile of jsonFiles) {
-        try {
-            console.log(`Fetching ${jsonFile}.json`);
-            const response = await fetch(jsonFile + ".json");
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            const data = await response.json();
-            for (const [key, value] of Object.entries(data)) {
-                if (question.includes(key.toLowerCase())) {
-                    await simulateBotTyping(50, value);
-                    return { boolValue: true, intValue: countLetters(value) };
-                }
-            }
-        } catch (error) {
-            console.error(`Error loading or parsing JSON file: ${jsonFile}`, error);
-        }
-    }
+// Placeholder function for question checking
+async function checkJsonQuestions(question, files) {
+    // Placeholder logic
     return { boolValue: false, intValue: 0 };
 }
 
-// Function to find best answer based on keywords
-async function findBestAnswer(question, jsonFiles) {
-    let highestOccurrences = 0;
-    let bestMatchAnswer = "";
-
-    for (const jsonFile of jsonFiles) {
-        try {
-            console.log(`Fetching ${jsonFile}.json`);
-            const response = await fetch(jsonFile + ".json");
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            const data = await response.json();
-            for (const [key, value] of Object.entries(data)) {
-                const keyWordsArray = key.toLowerCase().split(", ");
-                let wordOccurrences = 0;
-
-                keyWordsArray.forEach(keyword => {
-                    if (question.includes(keyword)) {
-                        wordOccurrences++;
-                    }
-                });
-
-                if (wordOccurrences > highestOccurrences) {
-                    highestOccurrences = wordOccurrences;
-                    bestMatchAnswer = value;
-                }
-            }
-        } catch (error) {
-            console.error(`Error loading or parsing JSON file: ${jsonFile}`, error);
-        }
-    }
-
-    if (highestOccurrences > 0) {
-        await simulateBotTyping(50, bestMatchAnswer);
-        return { boolValue: true, intValue: countLetters(bestMatchAnswer) };
-    }
-
+// Placeholder function for finding best answer
+async function findBestAnswer(question, files) {
+    // Placeholder logic
     return { boolValue: false, intValue: 0 };
+}
+
+function getFileContent(fileName) {
+    return fetch(fileName)
+        .then(response => response.json())
+        .catch(error => console.error(`Error fetching file ${fileName}:`, error));
 }
