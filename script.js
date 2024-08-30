@@ -82,6 +82,17 @@ function generateResponse(category) {
         return weatherResponses[Math.floor(Math.random() * weatherResponses.length)];
     }
 
+    if (category === "time") {
+        const timeResponses = [
+            "I don't have real-time clock functionality, but it's always the right time to play your game!",
+            "Time flies when you're having fun. What time is it? Time to play!",
+            "If you’re curious about the time, let’s just say it’s always game time here!",
+            "The exact time isn’t available, but let’s focus on the adventure at hand!",
+            "While I can’t provide the current time, it’s always a good time for gaming!"
+        ];
+        return timeResponses[Math.floor(Math.random() * timeResponses.length)];
+    }
+
     // Add responses for other categories
     if (category === "gaming") {
         const gamingResponses = [
@@ -104,10 +115,19 @@ function isWeatherRelatedQuestion(userMessage) {
         "what's the weather like", "whats the weather like", "what's the temperature", "whats the temperature",
         "how hot is it", "how cold is it", "What's the weather like today", "Whats the weather like today", "What's the weather like in your country",
         "Whats the weather like in your country"
-        
     ];
 
     return weatherPhrases.some(phrase => userMessage.includes(phrase));
+}
+
+// Function to check for time-related questions
+function isTimeRelatedQuestion(userMessage) {
+    const timePhrases = [
+        "what time is it", "current time", "what's the time", "whats the time", "what's the current time", "whats the current time",
+        "what time", "time now", "current time please", "tell me the time", "how much is the clock", "whats the clock at", "what's the clock at"
+    ];
+
+    return timePhrases.some(phrase => userMessage.includes(phrase));
 }
 
 // Function for menu questions
@@ -169,6 +189,18 @@ async function handleUserInput() {
         return;
     }
 
+    // Check if the user is asking about the time
+    if (isTimeRelatedQuestion(userMessage)) {
+        userInput.value = ""; // Clear the input field
+        displayUserMessage(userMessage);
+        isBotTyping = true;
+        const timeResponse = generateResponse("time");
+        await simulateBotTyping(50, timeResponse);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        isBotTyping = false;
+        return;
+    }
+
     // Handle greetings
     const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
     if (greetingRegex.test(userMessage)) {
@@ -184,50 +216,51 @@ async function handleUserInput() {
 
     isBotTyping = true;
 
-    const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
-    const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
-    let question = userInput.value.trim();
-    // Look for answers based on question
-    if (question !== "") {
-        displayUserMessage(question);
-        userInput.value = "";
-        let numberOfLetters = 0;
-        question = cleanStringsKeepSpaces(question).toLowerCase();
-        try {
-            let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
-            let checkKeywords = false;
-            if (checkQuestions.boolValue) {
-                numberOfLetters = checkQuestions.intValue;
-            } else {
-                checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
-                if (checkKeywords.boolValue) {
-                    numberOfLetters = checkKeywords.intValue;
-                }
-            }
-            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
-                const randomResponse = getRandomResponse();
-                numberOfLetters = countLetters(randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
-                await simulateBotTyping(50, randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-        } catch (error) {
-            console.error("An error occurred:", error);
-        }
+    // Check JSON files for a direct match
+    const jsonCategories = ["questions"];
+    const questionMatch = await checkJsonQuestions(userMessage, jsonCategories);
+
+    if (questionMatch.boolValue) {
+        displayUserMessage(userMessage);
+        isBotTyping = true;
+        await simulateBotTyping(50, `Your answer is: ${questionMatch.intValue} letters`);
         await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters !== 0) {
-            await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
-        }
         isBotTyping = false;
+        userInput.value = ""; // Clear the input field
+        return;
     }
+
+    // Find best answer based on keyword combinations
+    const keywordsCategories = ["keywords"];
+    const bestAnswerMatch = await findBestAnswer(userMessage, keywordsCategories);
+
+    if (bestAnswerMatch.boolValue) {
+        displayUserMessage(userMessage);
+        isBotTyping = true;
+        await simulateBotTyping(50, `The best answer is: ${bestAnswerMatch.intValue} letters`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        isBotTyping = false;
+        userInput.value = ""; // Clear the input field
+        return;
+    }
+
+    // Default response if no specific category matches
+    displayUserMessage(userMessage);
+    const defaultResponse = getRandomResponse();
+    await simulateBotTyping(50, defaultResponse);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    isBotTyping = false;
+    userInput.value = ""; // Clear the input field
 }
 
+// Add event listener for the send button
 sendBtn.addEventListener("click", handleUserInput);
-userInput.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
+
+// Add event listener for the Enter key
+userInput.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
         handleUserInput();
-        console.log("Send button clicked");
     }
 });
 
