@@ -5,7 +5,6 @@ function checkTerms() {
         }
     } catch (error) {
         console.error("Error accessing local storage:", error);
-        // Handle the error (e.g., fallback behavior, show error message)
     }
 }
 
@@ -32,18 +31,6 @@ const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigg
 let isBotTyping = false;
 let inappropriateWordCount = 0; // Variable to count inappropriate words
 
-// Add gaming-related weather responses
-const gamingWeatherResponses = [
-    "It's always good weather for gaming!",
-    "No need to worry about the weather when you've got games to play!",
-    "Rain or shine, it's the perfect time for gaming!",
-    "Sunny or not, the real adventure is in the game!",
-    "Why go outside when the best action is on your screen?",
-    "In the gaming world, the weather is always epic!",
-    "No matter the weather, it's always a great day to level up!",
-    "Cold outside? Perfect excuse to stay in and game!"
-];
-
 // Function to get random greeting from the array
 function getRandomGreeting() {
     const randomIndex = Math.floor(Math.random() * greetings.length);
@@ -56,29 +43,19 @@ function getRandomResponse() {
     return randomResponses[randomIndex];
 }
 
-// Function to check for weather-related questions
-function isWeatherRelatedQuestion(userMessage) {
-    const weatherPhrases = [
-        "how's the weather","hows the weather", "is it raining", "is it sunny", "is it cold", 
-        "is it warm", "is it snowing", "is it windy", 
-        "what's the weather like", "whats the weather like", "what's the temperature", "whats the temperature",
-        "how hot is it", "how cold is it", "What's the weather like today", "Whats the weather like today", "What's the weather like in your country",
-        "Whats the weather like in your country"
-    ];
-
-    return weatherPhrases.some(phrase => userMessage.includes(phrase));
+// Function to fetch JSON files
+async function fetchJsonFile(category) {
+    try {
+        const response = await fetch(`${category}.json`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching ${category}.json:`, error);
+        return [];
+    }
 }
-
-// Function to get a random gaming-related weather response
-function getRandomGamingWeatherResponse() {
-    const randomIndex = Math.floor(Math.random() * gamingWeatherResponses.length);
-    return gamingWeatherResponses[randomIndex];
-}
-
-window.onload = async function () {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    simulateBotTyping(50, getRandomGreeting());
-};
 
 // Function for menu questions
 function askBot(question) {
@@ -105,15 +82,12 @@ async function handleUserInput() {
     }
 
     if (containsInappropriateKeyword) {
-        // Check if the count reaches 3
         if (inappropriateWordCount >= 3) {
-            // Redirect the browser to the specified YouTube URL
             window.location.href = "https://youtu.be/L3HQMbQAWRc?t=29";
             return;
         }
 
-        // Delete the inappropriate message and display a placeholder message
-        displayUserMessage("Message deleted", "color: red; font-weight: bold;" );
+        displayUserMessage("Message deleted", "color: red; font-weight: bold;");
         userInput.value = ""; // Clear the input field
         isBotTyping = true;
         const inappropriateResponses = [
@@ -130,26 +104,16 @@ async function handleUserInput() {
         return;
     }
 
-    // Check for weather-related questions
-    if (isWeatherRelatedQuestion(userMessage)) {
-        userInput.value = ""; // Clear the input field
-        displayUserMessage(userMessage);
-        const randomResponse = getRandomGamingWeatherResponse();
-        await simulateBotTyping(50, randomResponse);
-        return;
-    }
-
     // Handle greetings
-    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');    
+    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
-        simulateBotTyping(50, randomGreeting).then(() => {
-            return new Promise(resolve => setTimeout(resolve, 1000));
-        }).then(() => {
-            isBotTyping = false;
-            userInput.value = ""; // Clear the input field
-        });
+        isBotTyping = true;
+        await simulateBotTyping(50, randomGreeting);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        isBotTyping = false;
+        userInput.value = ""; // Clear the input field
         return;
     }
 
@@ -158,7 +122,7 @@ async function handleUserInput() {
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-
+    // Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
@@ -186,24 +150,22 @@ async function handleUserInput() {
             console.error("An error occurred:", error);
         }
         await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters != 0) {
+        if (numberOfLetters !== 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
     }
 }
-
-sendBtn.addEventListener("click", handleUserInput);                
-userInput.addEventListener("keydown", function(event) {            
+sendBtn.addEventListener("click", handleUserInput);
+userInput.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
-        event.preventDefault(); 
-        handleUserInput(); 
+        event.preventDefault();
+        handleUserInput();
         console.log("Send button clicked");
     }
 });
 
-// Function to display user input after enter/click
-// Helper function to display user input
+// Helper function to display user input after enter/click
 function displayUserMessage(message, style = "") {
     const userMessage = `<div class="user-message" style="color: white;"><strong>Creature</strong>: <span style="${style}">${message}</span></div>`;
     chatBox.innerHTML += userMessage;
@@ -224,52 +186,151 @@ function displayBotMessage(message) {
 async function simulateBotTyping(delayForWords, botResponse) {
     const typingElement = document.createElement("div");
     typingElement.classList.add("bot-message", "bot-typing");
-    typingElement.innerHTML = `<img src="bot.png" alt="Robot" class="bot-avatar"><span class="bot-text">...</span>`;
     chatBox.appendChild(typingElement);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    let currentCharIndex = 0;
+    let typingInterval;
 
-    await new Promise(resolve => setTimeout(resolve, delayForWords));
-    typingElement.remove();
-    displayBotMessage(botResponse);
+    function displayResponse() {
+        clearInterval(typingInterval);
+        if (typingElement.parentElement === chatBox) {
+            chatBox.removeChild(typingElement);
+            displayBotMessage(botResponse);
+        }
+    }
+
+    typingInterval = setInterval(() => {
+        if (currentCharIndex <= botResponse.length) {
+            typingElement.innerHTML = `<span class="typing-color">${botResponse.substring(0, currentCharIndex)}</span>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            currentCharIndex++;
+        } else {
+            displayResponse();
+        }
+    }, delayForWords);
+
+    // Create and append skip button to the document body
+    const skipButton = document.getElementById("skipButton");
+    skipButton.textContent = "Skip";
+    skipButton.classList.add("skip-button");
+    document.body.appendChild(skipButton);
+
+    // Event listener to remove typing effect and display full message when skip button is clicked
+    skipButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        clearInterval(typingInterval);
+        displayResponse();
+        console.log("Skip button clicked");
+    });
 }
 
-// Function to count letters for typing simulation
-function countLetters(message) {
-    return message.length;
+// Helper function to match the question directly to avoid multiple operations
+async function checkJsonQuestions(question, jsonCategories) {
+    try {
+        for (const category of jsonCategories) {
+            const jsonArray = await fetchJsonFile(category);
+            console.log(`Checking category: ${category}`);
+            for (const jsonField of jsonArray) {
+                const jsonQuestion = cleanStringsKeepSpaces(jsonField["question"]).toLowerCase();
+                if (question === jsonQuestion) {
+                    console.log(`Match found for question: ${jsonField["question"]}`);
+                    simulateBotTyping(50, jsonField["answer"]);
+                    let numberOfLetters = countLetters(jsonField["answer"]);
+                    return { intValue: numberOfLetters, boolValue: true };
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error loading or parsing JSON:", error);
+    }
+    return { intValue: 0, boolValue: false };
 }
 
-// Function to clean strings for comparison
-function cleanStringsKeepSpaces(str) {
-    return str.replace(/\s+/g, ' ').trim();
+// Helper function to match best answer based on keyword combinations
+async function findBestAnswer(question, keywordsCategories) {
+    try {
+        let bestAnswer = null;
+        let bestMatchScore = 0;
+        for (const keyword of keywordsCategories) {
+            const jsonArray = await fetchJsonFile(keyword);
+            console.log(`Checking keywords file: ${keyword}`);
+            for (const jsonField of jsonArray) {
+                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
+                let match = keywordCombinations.some(keywordInCombinations => {
+                    const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
+                    return regex.test(question);
+                });
+                if (match) {
+                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
+                    if (matchScore > bestMatchScore) {
+                        bestMatchScore = matchScore;
+                        bestAnswer = jsonField["answer"];
+                        console.log(`Best match found: ${bestAnswer}`);
+                    }
+                }
+            }
+        }
+        if (bestAnswer) {
+            simulateBotTyping(50, bestAnswer);
+            let numberOfLetters = countLetters(bestAnswer);
+            return { intValue: numberOfLetters, boolValue: true };
+        }
+    } catch (error) {
+        console.error("Error loading or parsing JSON:", error);
+    }
+    return { intValue: 0, boolValue: false };
 }
 
-// Placeholder function for question checking
-async function checkJsonQuestions(question, files) {
-    // Placeholder logic
-    return { boolValue: false, intValue: 0 };
+// Helper function to clean and normalize input strings
+function cleanStringsKeepSpaces(input) {
+    return input.replace(/[^\w\s]/gi, '').trim();
 }
 
-// Placeholder function for finding best answer
-async function findBestAnswer(question, files) {
-    // Placeholder logic
-    return { boolValue: false, intValue: 0 };
+// Helper function to count the number of letters in a string
+function countLetters(text) {
+    return (text.match(/[a-zA-Z]/g) || []).length;
 }
 
-function getFileContent(fileName) {
-    return fetch(fileName)
-        .then(response => response.json())
-        .catch(error => console.error(`Error fetching file ${fileName}:`, error));
+// Helper function to check the match score for a question
+function checkQuestionMatch(userQuestion, keywordCombinationsString) {
+    let occurrences = 0;
+    const keywordCombinations = keywordCombinationsString.split('+');
+
+    keywordCombinations.forEach(combo => {
+        const comboKeywords = combo.split(' ');
+        if (comboKeywords.every(keyword => userQuestion.includes(keyword))) {
+            occurrences += 10; // Bonus for full match
+        }
+        comboKeywords.forEach(keyword => {
+            if (userQuestion.includes(keyword)) {
+                occurrences++;
+            }
+        });
+    });
+
+    return occurrences;
 }
 
-popoverButton.addEventListener("click", () => {
-    popoverContent.classList.toggle("show");
+// Initialize the chatbox with a greeting
+displayBotMessage(getRandomGreeting());
+
+// Add event listener for the report button
+reportButton.addEventListener("click", function () {
+    const reportMessage = "Report this message";
+    displayBotMessage(reportMessage);
+    console.log("Report button clicked");
 });
 
-reportButton.addEventListener("click", () => {
-    const bugReportWindow = window.open(
-        "report_form.html",
-        "Bug Report",
-        "width=700,height=500,left=" + (window.innerWidth / 2 - 200) + ",top=" + (window.innerHeight / 2 - 250)
-    );
-    bugReportWindow.focus();
+// Add event listener for the popover button
+popoverButton.addEventListener("click", function () {
+    const popoverContentText = "Popover content goes here!";
+    popoverContent.textContent = popoverContentText;
+    popoverContent.classList.toggle("show");
+    console.log("Popover button clicked");
+});
+
+// Add event listener for the skip button
+const skipButton = document.getElementById("skipButton");
+skipButton.addEventListener("click", function (event) {
+    event.stopPropagation();
+    // Handle skip button click
 });
