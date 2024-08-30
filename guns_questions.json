@@ -137,4 +137,30 @@
     },
     {
         "question": "Weapon categories?",
-        "answer": "Weapon categories in DayZ: melee, Handguns, Shotguns, Submachine Guns, Assault Rifles, Battle Rifles, Bolt-Action Rifles, Break-Action Rifles, Lever
+        "answer": "Weapon categories in DayZ: melee, Handguns, Shotguns, Submachine Guns, Assault Rifles, Battle Rifles, Bolt-Action Rifles, Break-Action Rifles, Lever-Action Rifles, Pump-Action Rifles, Machine Guns."
+    },
+    {
+        "question": "How to use gun attachments?",
+        "answer": "To use gun attachments, you need to first equip the weapon. Then, access the inventory and drag the attachment to the weapon or right-click and select the 'Attach' option."
+    },
+    {
+        "question": "How do you find rare guns?",
+        "answer": "Rare guns can be found in military bases, police stations, and certain lootable locations. They can also sometimes be found in helicopter crash sites."
+    },
+    {
+        "question": "Where to find military grade weapons?",
+        "answer": "Military-grade weapons can be found in military bases, police stations, military tents, and sometimes in high-risk loot areas such as helicopter crash sites."
+    },
+    {
+        "question": "How to repair weapons?",
+        "answer": "Weapons can be repaired using repair kits, duct tape, or by combining them with spare parts. The repair process involves accessing the inventory, selecting the weapon, and choosing the repair option."
+    },
+    {
+        "question": "What is the difference between a rifle and a shotgun?",
+        "answer": "Rifles typically have higher accuracy and range compared to shotguns, which are more effective at close range due to their spread of pellets."
+    },
+    {
+        "question": "How to clean a weapon?",
+        "answer": "Weapons can be cleaned using a cleaning kit, which helps to remove dirt and corrosion and maintain the weapon's condition. Access the cleaning kit from your inventory and select the 'Clean' option."
+    }
+]
