@@ -17,3 +17,4 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("Agree Checkbox or Continue Button not found!");
     }
 });
+
