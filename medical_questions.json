@@ -1,14 +1,17 @@
 [
 	{
 		"question": "What threats are present in DayZ apart from starving, dehydration and zombies?",
+                "keywords": ["threats"],
 		"answer": "Here is a list of the threats: Cholera, Cold, Influenza (Flu), Salmonella, Chemical Poisoning, Heart Attack, Hemolytic Reaction, Brain Disease (Permanent)."
 	},
 	{
 		"question": "What diseases are present in DayZ?",
+                "keywords": ["diseases","sickness"],
 		"answer": "Here is a list of the threats: Cholera, Cold, Influenza (Flu), Salmonella, Chemical Poisoning, Heart Attack, Hemolytic Reaction, Brain Disease (Permanent)."
 	},
 	{
-		"question": "What is Cholera and how do I treat it?",
+		"question": "What is cholera and how do I treat it?",
+                "keywords": ["cholera"],
 		"answer": "It is a disease and the causes of Cholera are drinking from contaminated water, drinking or eating with bloody bare hands. The symptom is vomiting and the treatment is Tetracycline Pills."
 	},
 	{
@@ -16,31 +19,38 @@
 		"answer": "It is a virus and the causes of Cold are having a low temperature for too long, being exposed to rain for too long, or being exposed to another Survivor who has a Cold. The symptoms are sneezing and coughing (can spread to nearby survivors) and the treatment is Tetracycline Pills."
 	},
 	{
-		"question": "What is Influenza (Flu) and how do I treat it?",
-		"answer": "It is a virus and the causes of Influenza are having a low temperature for too long, being exposed to rain for too long, or being exposed to another Survivor who has the Flu. The symptoms are sneezing and coughing (can spread to nearby survivors) is Tetracycline Pills."
-	},
+        "question": "What is influenza (Flu) and how do I treat it?",
+        "keywords": ["influenza", "flu"],
+        "answer": "It is a virus and the causes of Influenza are having a low temperature for too long, being exposed to rain for too long, or being exposed to another Survivor who has the Flu. The symptoms are sneezing and coughing (can spread to nearby survivors) is Tetracycline Pills."
+    },
 	{
-		"question": "What is Salmonella and how do I treat it?",
+		"question": "What is salmonella and how do I treat it?",
+                 "keywords": ["salmonella"],
 		"answer": "It is a disease and the cause of Salmonella is eating uncooked or raw meat. The symptom is vomiting and the treatment is Charcoal Tablets."
 		},
 	{
-		"question": "What is Chemical Poisoning and how do I treat it?",
+		"question": "What is chemical poisoning and how do I treat it?",
+                 "keywords": ["chemical poisoning"],
 		"answer": "It is an illness and the causes of Chemical Poisoning are drinking Alcoholic Tincture, Gasoline, or Disinfectant Spray. The symptoms are hydration and blood loss and the treatment is Charcoal Tablets."
 	},
 	{
-		"question": "What is Heart Attack and how do I treat it?",
+		"question": "What is heart attack and how do I treat it?",
+                 "keywords": ["heart attack", "heartattack"],
 		"answer": "It is an illness and the causes of Heart Attack are a quick loss of blood or too much shock. The symptoms are falling unconscious, health damage, possibly death and the treatment is Epinephrine Auto-injector."
 	},
 	{
-		"question": "What is Hemolytic Reaction and how do I treat it?",
+		"question": "What is hemolytic reaction and how do I treat it?",
+                "keywords": ["hemolytic reaction", "hemolytic"],
 		"answer": "It is an illness and the cause of Hemolytic Reaction is receiving blood that is incompatible with your own. The symptoms are blood loss and health damage and there is no treatment."
 	},
 	{
-		"question": "What is Brain Damage and how do I treat it?",
+		"question": "What is brain damage and how do I treat it?",
+                "keywords": ["brain damage", "brain dmg"],
 		"answer": "It is a disease and the cause of Brain Damage is eating Human Steak or Human Meat of any kind from dead players. The symptoms are uncontrollable random laughter and random tremors and the treatment is suicide or death."
 	},
 	{
 		"question": "my leg is broken",
+                "keywords": ["broken leg"],
 		"answer": "Once you receive a fracture, you'll get a special broken bone symbol in your HUD and you'll be forced to the prone position. If you were to stand up and walk you'll receive shock damage (numbers are not known as of now) and you'll go unconscious in 2-3 steps. You will not regenerate your shock damage while standing or crouching, only when you're prone. You can not do the following actions while having a un-splinted fracture; climbing, swimming. These action will kill the player as you go unconscious in the water and drown or climb a ladder and fall to your death. However, you can still drive a car without a splint and walk.You can extend the period of walking however, you can use Codeine Pills or a Morphine Auto-Injector. The Codeine Pills will allow you to take 25% more steps before you go unconscious and the Morphine Auto-Injector allows you to take 50% more steps. To properly fix your fracture, you have to craft a Splint (4 Rags and 2 Short Sticks). With the Splint applied you can not run or jump, however you can climb over small obstacles like garden fences. You can't get another fracture, as long as the Splint is applied, meaning you can fall from higher places, without receiving a 2nd fracture. You can also heal the fracture over time, this will take a while. As you need max health, max blood, at least 4000 energy and 2500 hydration. When you reach the minimum requirement to start healing your fracture, you have to wait a minimum of 34 minutes depending on the severity of the fracture. This is with the Splint applied, if you have no Splint applied the recovery will take twice as long."
 	},
 	{
@@ -49,6 +59,7 @@
 	},
 	{
 		"question": "i got a factured leg",
+                "keywords": ["factured"],
 		"answer": "Once you receive a fracture, you'll get a special broken bone symbol in your HUD and you'll be forced to the prone position. If you were to stand up and walk you'll receive shock damage (numbers are not known as of now) and you'll go unconscious in 2-3 steps. You will not regenerate your shock damage while standing or crouching, only when you're prone. You can not do the following actions while having a un-splinted fracture; climbing, swimming. These action will kill the player as you go unconscious in the water and drown or climb a ladder and fall to your death. However, you can still drive a car without a splint and walk.You can extend the period of walking however, you can use Codeine Pills or a Morphine Auto-Injector. The Codeine Pills will allow you to take 25% more steps before you go unconscious and the Morphine Auto-Injector allows you to take 50% more steps. To properly fix your fracture, you have to craft a Splint (4 Rags and 2 Short Sticks). With the Splint applied you can not run or jump, however you can climb over small obstacles like garden fences. You can't get another fracture, as long as the Splint is applied, meaning you can fall from higher places, without receiving a 2nd fracture. You can also heal the fracture over time, this will take a while. As you need max health, max blood, at least 4000 energy and 2500 hydration. When you reach the minimum requirement to start healing your fracture, you have to wait a minimum of 34 minutes depending on the severity of the fracture. This is with the Splint applied, if you have no Splint applied the recovery will take twice as long."
 	},
 	{
