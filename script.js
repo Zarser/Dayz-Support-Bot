@@ -102,16 +102,13 @@ async function handleUserInput() {
     }
     
     // Handle greetings
-	const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');	
+    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
-        simulateBotTyping(50, randomGreeting).then(() => {
-            return new Promise(resolve => setTimeout(resolve, 1000));
-        }).then(() => {
-            isBotTyping = false;
-            userInput.value = ""; // Clear the input field
-        });
+        await simulateBotTyping(50, randomGreeting);
+        userInput.value = ""; // Clear the input field
+        isBotTyping = false;
         return;
     }
 
@@ -120,37 +117,37 @@ async function handleUserInput() {
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-	
+    
     // Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
         let numberOfLetters = 0;
-		question = cleanStringsKeepSpaces(question).toLowerCase();
+        question = cleanStringsKeepSpaces(question).toLowerCase();
         try {
-			// First check questions
-			let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
+            // First check questions
+            let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
             let checkKeywords = false;
-			if (checkQuestions.boolValue) {
-				numberOfLetters = checkQuestions.intValue;
-			} else { // If no question found in jsons, continue to keywords pairs and hope for the best
-				checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
-				if (checkKeywords.boolValue) {
-					numberOfLetters = checkKeywords.intValue;
-				}
-			}
-			// If all fails, give user some random input.
+            if (checkQuestions.boolValue) {
+                numberOfLetters = checkQuestions.intValue;
+            } else { // If no question found in jsons, continue to keywords pairs and hope for the best
+                checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
+                if (checkKeywords.boolValue) {
+                    numberOfLetters = checkKeywords.intValue;
+                }
+            }
+            // If all fails, give user some random input.
             if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
                 const randomResponse = getRandomResponse();
-				numberOfLetters = countLetters(randomResponse);
-				await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
+                numberOfLetters = countLetters(randomResponse);
+                await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
                 await simulateBotTyping(50, randomResponse);
-				await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
         } catch (error) {
             console.error("An error occurred:", error);
         }
-		await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         if (numberOfLetters != 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
@@ -160,8 +157,8 @@ async function handleUserInput() {
 }
 
 // Send button and Enter key listeners
-sendBtn.addEventListener("click", handleUserInput);				
-userInput.addEventListener("keydown", function(event) {			
+sendBtn.addEventListener("click", handleUserInput);                
+userInput.addEventListener("keydown", function(event) {            
     if (event.key === "Enter") {
         event.preventDefault(); 
         handleUserInput(); 
@@ -246,7 +243,11 @@ popoverButton.addEventListener("click", function () {
 async function checkJsonQuestions(question, jsonFiles) {
     for (const jsonFile of jsonFiles) {
         try {
+            console.log(`Fetching ${jsonFile}.json`);
             const response = await fetch(jsonFile + ".json");
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
             const data = await response.json();
             for (const [key, value] of Object.entries(data)) {
                 if (question.includes(key.toLowerCase())) {
@@ -268,7 +269,11 @@ async function findBestAnswer(question, jsonFiles) {
 
     for (const jsonFile of jsonFiles) {
         try {
+            console.log(`Fetching ${jsonFile}.json`);
             const response = await fetch(jsonFile + ".json");
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
             const data = await response.json();
             for (const [key, value] of Object.entries(data)) {
                 const keyWordsArray = key.toLowerCase().split(", ");
