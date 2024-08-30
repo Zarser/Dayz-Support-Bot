@@ -21,8 +21,9 @@
     border: 3px solid #ccc;
     border-radius: 10px;
     height: 700px;
+    width: 100%; 
     width: 800px;
-    overflow: auto;
+	overflow: auto;
 }
 
 .navbar {
@@ -72,8 +73,8 @@
 .popover-content {
     display: none;
     position: absolute;
-    top: 10px;
-    left: 40px;
+    top: 10px; /* Adjusted to be 10px lower */
+    left: 40px; /* Adjusted to be 10px from the side */
     background-color: #f9f9f923;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px;
@@ -82,8 +83,8 @@
 }
 
 .report-button {
-    font-size: 8px;
-    padding: 4px 8px;
+    font-size: 8px; /* Adjust the font size as needed */
+    padding: 4px 8px; /* Adjust the padding as needed */
 }
 
 .show {
@@ -92,51 +93,5 @@
 
 div.terms {
     color: white;
-}
-
-/* Styles for the skip and send buttons */
-#sendBtn {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-#skipButton {
-    background-color: #f44336; /* Red */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-/* Ensure that the skip button stays beside the send button */
-#buttonContainer {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px; /* Adds space between buttons */
-}
-
-/* Container for user input and buttons to make alignment consistent */
-.user-input-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
 }
 
