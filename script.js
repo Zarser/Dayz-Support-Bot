@@ -5,7 +5,6 @@ function checkTerms() {
         }
     } catch (error) {
         console.error("Error accessing local storage:", error);
-        // Handle the error (e.g., fallback behavior, show error message)
     }
 }
 
@@ -32,18 +31,6 @@ const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigg
 let isBotTyping = false;
 let inappropriateWordCount = 0; // Variable to count inappropriate words
 
-// Add gaming-related weather responses
-const gamingWeatherResponses = [
-    "It's always good weather for gaming!",
-    "No need to worry about the weather when you've got games to play!",
-    "Rain or shine, it's the perfect time for gaming!",
-    "Sunny or not, the real adventure is in the game!",
-    "Why go outside when the best action is on your screen?",
-    "In the gaming world, the weather is always epic!",
-    "No matter the weather, it's always a great day to level up!",
-    "Cold outside? Perfect excuse to stay in and game!"
-];
-
 // Function to get random greeting from the array
 function getRandomGreeting() {
     const randomIndex = Math.floor(Math.random() * greetings.length);
@@ -54,24 +41,6 @@ function getRandomGreeting() {
 function getRandomResponse() {
     const randomIndex = Math.floor(Math.random() * randomResponses.length);
     return randomResponses[randomIndex];
-}
-
-// Function to check for weather-related questions
-function isWeatherRelatedQuestion(userMessage) {
-    const weatherPhrases = [
-        "how's the weather","hows the weather", "is it raining", "is it sunny", "is it cold", 
-        "is it warm", "is it snowing", "is it windy", "is it hot", 
-        "what's the weather like", "whats the weather like", "whats the temperature", "what's the temperature", 
-        "how hot is it", "how cold is it"
-    ];
-
-    return weatherPhrases.some(phrase => userMessage.includes(phrase));
-}
-
-// Function to get a random gaming-related weather response
-function getRandomGamingWeatherResponse() {
-    const randomIndex = Math.floor(Math.random() * gamingWeatherResponses.length);
-    return gamingWeatherResponses[randomIndex];
 }
 
 window.onload = async function () {
@@ -129,15 +98,6 @@ async function handleUserInput() {
         return;
     }
 
-    // Check for weather-related questions
-    if (isWeatherRelatedQuestion(userMessage)) {
-        userInput.value = ""; // Clear the input field
-        displayUserMessage(userMessage);
-        const randomResponse = getRandomGamingWeatherResponse();
-        await simulateBotTyping(50, randomResponse);
-        return;
-    }
-
     // Handle greetings
     const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');    
     if (greetingRegex.test(userMessage)) {
@@ -158,22 +118,28 @@ async function handleUserInput() {
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
 
+    // Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
         let numberOfLetters = 0;
         question = cleanStringsKeepSpaces(question).toLowerCase();
         try {
+            // First check questions
             let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
+
             let checkKeywords = false;
-            if (checkQuestions.boolValue) {
-                numberOfLetters = checkQuestions.intValue;
-            } else {
+            if (!checkQuestions.boolValue) {
+                // If no question found in jsons, continue to keywords pairs and hope for the best
                 checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
                 if (checkKeywords.boolValue) {
                     numberOfLetters = checkKeywords.intValue;
                 }
+            } else {
+                numberOfLetters = checkQuestions.intValue;
             }
+
+            // If all fails, give user some random input.
             if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
                 const randomResponse = getRandomResponse();
                 numberOfLetters = countLetters(randomResponse);
@@ -212,9 +178,9 @@ function displayUserMessage(message, style = "") {
 // Helper function to display bot output
 function displayBotMessage(message) {
     const botMessage = `<div class="bot-message">
-    <img src="bot.png" alt="Robot" class="bot-avatar">
-    <span class="bot-text">${message}</span>
-</div>`;
+        <img src="bot.png" alt="Robot" class="bot-avatar">
+        <span class="bot-text">${message}</span>
+    </div>`;
     chatBox.innerHTML += botMessage;
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -223,52 +189,128 @@ function displayBotMessage(message) {
 async function simulateBotTyping(delayForWords, botResponse) {
     const typingElement = document.createElement("div");
     typingElement.classList.add("bot-message", "bot-typing");
-    typingElement.innerHTML = `<img src="bot.png" alt="Robot" class="bot-avatar"><span class="bot-text">...</span>`;
     chatBox.appendChild(typingElement);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    let currentCharIndex = 0;
+    let typingInterval;
 
-    await new Promise(resolve => setTimeout(resolve, delayForWords));
-    typingElement.remove();
-    displayBotMessage(botResponse);
+    function displayResponse() {
+        clearInterval(typingInterval);
+        if (typingElement.parentElement === chatBox) {
+            chatBox.removeChild(typingElement);
+            displayBotMessage(botResponse);
+        }
+    }
+
+    typingInterval = setInterval(() => {
+        if (currentCharIndex <= botResponse.length) {
+            typingElement.innerHTML = `<span class="typing-color">${botResponse.substring(0, currentCharIndex)}</span>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            currentCharIndex++;
+        } else {
+            displayResponse();
+        }
+    }, delayForWords);
+
+    // Create and append skip button to the document body
+    const skipButton = document.getElementById("skipButton");
+    skipButton.textContent = "Skip";
+    skipButton.classList.add("skip-button");
+    document.body.appendChild(skipButton);
+
+    // Event listener to remove typing effect and display full message when skip button is clicked
+    skipButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        clearInterval(typingInterval);
+        displayResponse();
+        console.log("Skip button clicked");
+    });
 }
 
-// Function to count letters for typing simulation
-function countLetters(message) {
-    return message.length;
+// Helper function to match the question directly to avoid multiple operations
+async function checkJsonQuestions(question, jsonCategories) {
+    try {
+        for (const category of jsonCategories) {
+            console.log(`Fetching ${category}.json`); // Debugging line
+            const response = await fetch(`./${category}.json`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
+            }
+            const jsonArray = await response.json();
+            console.log(`Data fetched from ${category}.json:`, jsonArray); // Debugging line
+
+            for (const jsonField of jsonArray) {
+                const questionVariants = [jsonField["question"].toLowerCase()].concat(jsonField["keywords"].map(keyword => keyword.toLowerCase()));
+                for (const variant of questionVariants) {
+                    if (question.includes(variant)) {
+                        console.log(`Match found for question: ${variant}`);
+                        await simulateBotTyping(50, jsonField["answer"]);
+                        let numberOfLetters = countLetters(jsonField["answer"]);
+                        const result = [numberOfLetters, true];
+                        result.intValue = result[0];
+                        result.boolValue = result[1];
+                        return result;
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error loading or parsing JSON:", error);
+    }
+    return [0, false];
 }
 
-// Function to clean strings for comparison
-function cleanStringsKeepSpaces(str) {
-    return str.replace(/\s+/g, ' ').trim();
+// Helper function to count letters in a string
+function countLetters(string) {
+    return string.replace(/ /g, "").length;
 }
 
-// Placeholder function for question checking
-async function checkJsonQuestions(question, files) {
-    // Placeholder logic
-    return { boolValue: false, intValue: 0 };
+// Function to clean input strings, keeping only letters and spaces
+function cleanStringsKeepSpaces(string) {
+    return string.replace(/[^a-zA-Z\s]/g, "").trim();
 }
 
-// Placeholder function for finding best answer
-async function findBestAnswer(question, files) {
-    // Placeholder logic
-    return { boolValue: false, intValue: 0 };
+// Find best answer based on keywords
+async function findBestAnswer(question, jsonKeywordsFiles) {
+    try {
+        for (const category of jsonKeywordsFiles) {
+            console.log(`Fetching ${category}.json`); // Debugging line
+            const response = await fetch(`./${category}.json`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
+            }
+            const jsonArray = await response.json();
+            console.log(`Data fetched from ${category}.json:`, jsonArray); // Debugging line
+
+            for (const jsonField of jsonArray) {
+                const questionVariants = [jsonField["question"].toLowerCase()].concat(jsonField["keywords"].map(keyword => keyword.toLowerCase()));
+                for (const variant of questionVariants) {
+                    if (question.includes(variant)) {
+                        console.log(`Match found for keyword: ${variant}`);
+                        await simulateBotTyping(50, jsonField["answer"]);
+                        let numberOfLetters = countLetters(jsonField["answer"]);
+                        const result = [numberOfLetters, true];
+                        result.intValue = result[0];
+                        result.boolValue = result[1];
+                        return result;
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error loading or parsing JSON:", error);
+    }
+    return [0, false];
 }
 
-function getFileContent(fileName) {
-    return fetch(fileName)
-        .then(response => response.json())
-        .catch(error => console.error(`Error fetching file ${fileName}:`, error));
-}
-
-popoverButton.addEventListener("click", () => {
-    popoverContent.classList.toggle("show");
+popoverButton.addEventListener("click", function() {
+    if (popoverContent.style.display === "none" || popoverContent.style.display === "") {
+        popoverContent.style.display = "block";
+    } else {
+        popoverContent.style.display = "none";
+    }
 });
 
-reportButton.addEventListener("click", () => {
-    const bugReportWindow = window.open(
-        "report_form.html",
-        "Bug Report",
-        "width=700,height=500,left=" + (window.innerWidth / 2 - 200) + ",top=" + (window.innerHeight / 2 - 250)
-    );
-    bugReportWindow.focus();
+reportButton.addEventListener("click", function() {
+    // Report button functionality here
+    alert("Thank you for reporting. We will look into it.");
 });
