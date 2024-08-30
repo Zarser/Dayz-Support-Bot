@@ -229,15 +229,24 @@ async function checkJsonQuestions(question, jsonCategories) {
         for (const category of jsonCategories) {
             const jsonArray = await fetchJsonFile(category);
             console.log(`Checking category: ${category}`);
+
+            if (!Array.isArray(jsonArray)) {
+                console.error(`Expected an array but got:`, jsonArray);
+                continue; // Skip to the next category if data isn't an array
+            }
+
             for (const jsonField of jsonArray) {
                 if (jsonField && typeof jsonField["question"] === "string" && typeof jsonField["answer"] === "string") {
                     const jsonQuestion = cleanStringsKeepSpaces(jsonField["question"]).toLowerCase();
+                    console.log(`Comparing: "${question}" with "${jsonQuestion}"`);
                     if (question === jsonQuestion) {
                         console.log(`Match found for question: ${jsonField["question"]}`);
-                        simulateBotTyping(50, jsonField["answer"]);
+                        await simulateBotTyping(50, jsonField["answer"]);
                         let numberOfLetters = countLetters(jsonField["answer"]);
                         return { intValue: numberOfLetters, boolValue: true };
                     }
+                } else {
+                    console.warn(`Invalid JSON field encountered:`, jsonField);
                 }
             }
         }
@@ -252,29 +261,42 @@ async function findBestAnswer(question, keywordsCategories) {
     try {
         let bestAnswer = null;
         let bestMatchScore = 0;
+
         for (const keyword of keywordsCategories) {
             const jsonArray = await fetchJsonFile(keyword);
             console.log(`Checking keywords file: ${keyword}`);
+
+            if (!Array.isArray(jsonArray)) {
+                console.error(`Expected an array but got:`, jsonArray);
+                continue; // Skip to the next file if data isn't an array
+            }
+
             for (const jsonField of jsonArray) {
                 if (jsonField && typeof jsonField["keyword"] === "string" && typeof jsonField["answer"] === "string") {
                     const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
+                    console.log(`Comparing with keywords: ${keywordCombinations.join(', ')}`);
+
                     let match = keywordCombinations.some(keywordInCombinations => {
                         const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
                         return regex.test(question);
                     });
+
                     if (match) {
                         const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
                         if (matchScore > bestMatchScore) {
                             bestMatchScore = matchScore;
                             bestAnswer = jsonField["answer"];
-                            console.log(`Best match found: ${bestAnswer}`);
+                            console.log(`Best match found with score ${matchScore}: ${bestAnswer}`);
                         }
                     }
+                } else {
+                    console.warn(`Invalid JSON field encountered:`, jsonField);
                 }
             }
         }
+
         if (bestAnswer) {
-            simulateBotTyping(50, bestAnswer);
+            await simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
             return { intValue: numberOfLetters, boolValue: true };
         }
@@ -283,6 +305,7 @@ async function findBestAnswer(question, keywordsCategories) {
     }
     return { intValue: 0, boolValue: false };
 }
+
 
 // Helper function to clean and normalize input strings
 function cleanStringsKeepSpaces(input) {
