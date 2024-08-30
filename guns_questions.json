@@ -96,4 +96,45 @@
         "answer": "The Blaze 95 can often be found in hunting stands and civilian loot spawns."
     },
     {
-        "question": "Can the Blaze 95 Double Rifle be
+        "question": "Can the Blaze 95 Double Rifle be equipped with a scope?",
+        "answer": "Yes, you can attach a hunting scope to the Blaze 95, improving its accuracy for long-range shots."
+    },
+    {
+        "question": "What is the Amphibia S in DayZ Standalone?",
+        "answer": "The Amphibia S is a compact semi-automatic pistol that can be chambered for both 9x19mm and .380 ACP ammunition."
+    },
+    {
+        "question": "Where can you find the Amphibia S in DayZ Standalone?",
+        "answer": "The Amphibia S can be found in civilian loot locations and is commonly used as a backup weapon."
+    },
+    {
+        "question": "Can you attach a suppressor to the Amphibia S in DayZ Standalone?",
+        "answer": "Yes, you can attach a suppressor to the Amphibia S, reducing the noise of gunfire."
+    },
+    {
+        "question": "What is the Izh 18 Rifle in DayZ Standalone?",
+        "answer": "The Izh 18 is a single-shot hunting rifle chambered for various calibers, including .223 and .308."
+    },
+    {
+        "question": "Where can you find the Izh 18 Rifle in DayZ Standalone?",
+        "answer": "The Izh 18 is commonly found in hunting stands and civilian loot spawns."
+    },
+    {
+        "question": "Is the Izh 18 Rifle suitable for long-range engagements?",
+        "answer": "Yes, the Izh 18's accuracy makes it suitable for precise long-range shots."
+    },
+    {
+        "question": "What gun uses 7.62?",
+        "answer": "Depends which 7.62 caliber you are referring to. If you mean 7.62x39mm, then BK-18/Sawed-off BK-18, CR-527, SK 59/66, KA-M or alternatively 7.62x54mmR, then Mosin 91/30, VSD, Sawed-off Mosin 91/30."
+    },
+    {
+        "question": "Best 5.56 gun?",
+        "answer": "Based on damage, in the Vanilla version the best assault rifle that uses 5.56x45mm is the AUR AX."
+    },
+    {
+        "question": "Best 7.62 gun?",
+        "answer": "Depends which 7.62 caliber you are referring to. If you mean 7.62x39mm, then best to use is the KA-M or alternatively 7.62x54mmR, then VSD. However, it's worth mentioning that the Mosin is more common than the VSD."
+    },
+    {
+        "question": "Weapon categories?",
+        "answer": "Weapon categories in DayZ: melee, Handguns, Shotguns, Submachine Guns, Assault Rifles, Battle Rifles, Bolt-Action Rifles, Break-Action Rifles, Lever
