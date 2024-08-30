@@ -238,7 +238,8 @@ async function checkJsonQuestions(question, jsonCategories) {
             for (const jsonField of jsonArray) {
                 if (jsonField && typeof jsonField["question"] === "string" && typeof jsonField["answer"] === "string") {
                     const jsonQuestion = cleanStringsKeepSpaces(jsonField["question"]).toLowerCase();
-                    console.log(`Comparing: "${question}" with "${jsonQuestion}"`);
+
+                    // Check if the cleaned question matches the input question
                     if (question === jsonQuestion) {
                         console.log(`Match found for question: ${jsonField["question"]}`);
                         await simulateBotTyping(50, jsonField["answer"]);
@@ -256,15 +257,16 @@ async function checkJsonQuestions(question, jsonCategories) {
     return { intValue: 0, boolValue: false };
 }
 
+
 // Helper function to match best answer based on keyword combinations
 async function findBestAnswer(question, keywordsCategories) {
     try {
         let bestAnswer = null;
         let bestMatchScore = 0;
 
-        for (const keyword of keywordsCategories) {
-            const jsonArray = await fetchJsonFile(keyword);
-            console.log(`Checking keywords file: ${keyword}`);
+        for (const category of keywordsCategories) {
+            const jsonArray = await fetchJsonFile(category);
+            console.log(`Checking keywords file: ${category}`);
 
             if (!Array.isArray(jsonArray)) {
                 console.error(`Expected an array but got:`, jsonArray);
@@ -272,17 +274,17 @@ async function findBestAnswer(question, keywordsCategories) {
             }
 
             for (const jsonField of jsonArray) {
-                if (jsonField && typeof jsonField["keyword"] === "string" && typeof jsonField["answer"] === "string") {
-                    const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
-                    console.log(`Comparing with keywords: ${keywordCombinations.join(', ')}`);
+                if (jsonField && Array.isArray(jsonField["keywords"]) && typeof jsonField["answer"] === "string") {
+                    const keywords = jsonField["keywords"].map(kw => kw.toLowerCase());
+                    console.log(`Comparing with keywords: ${keywords.join(', ')}`);
 
-                    let match = keywordCombinations.some(keywordInCombinations => {
-                        const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
+                    let match = keywords.some(keyword => {
+                        const regex = new RegExp(`\\b${keyword}\\b`, 'i');
                         return regex.test(question);
                     });
 
                     if (match) {
-                        const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
+                        const matchScore = checkQuestionMatch(question, keywords.join(' '));
                         if (matchScore > bestMatchScore) {
                             bestMatchScore = matchScore;
                             bestAnswer = jsonField["answer"];
@@ -305,6 +307,7 @@ async function findBestAnswer(question, keywordsCategories) {
     }
     return { intValue: 0, boolValue: false };
 }
+
 
 
 // Helper function to clean and normalize input strings
