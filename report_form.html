@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>Bug Report</title>
+    <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .bug-report {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    form {
+        width: 80%;
+        max-width: 400px;
+    }
+
+
+    /* Include any additional CSS styles here */
+</style>
+</head>
+<body class="bg-dark">
+	<center>
+
+    <div class="bug-report">
+        <form id="bugReportForm">
+			
+			<p id="inappropriateErrorEmail" style="color: red; display: none;"><strong>Inappropriate words not accepted</strong></p>
+            <textarea id="bugDescription" rows="4" cols="50" placeholder="Describe the bug/error."></textarea>
+            <p id="inappropriateErrorBugReport" style="color: red; display: none;"><strong>Inappropriate words not accepted</strong></p>
+			<p id="incorrectEmailFormat" style="color: red; display: none;"><strong>Incorrect email format.</strong></p>
+            <input id="email" placeholder="Insert your email here."><button class="btn btn-outline-secondary icon-link icon-link-hover" type="submit" id="submit">Submit Report
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+    <script>
+		document.getElementById("bugReportForm").addEventListener("submit", function(event) {
+			event.preventDefault(); // Prevent form submission to prevent page reload
+			const email = document.getElementById("email").value.toLowerCase();
+			const bugDescription = document.getElementById("bugDescription").value.toLowerCase();
+			const inappropriateKeywords = ["porn", "sex", "racism", "politics"];
+			const containsInappropriateKeywordEmail = inappropriateKeywords.some(keyword => email.includes(keyword));
+			const containsInappropriateKeywordBugReport = inappropriateKeywords.some(keyword => bugDescription.includes(keyword));
+			let inappropiateWords = false;
+			let wrongEmailFormat = false;
+			if (containsInappropriateKeywordEmail) {
+				document.getElementById("inappropriateErrorEmail").style.display = "block";
+				inappropiateWords = true;
+			}
+			if (containsInappropriateKeywordBugReport) {
+				document.getElementById("inappropriateErrorBugReport").style.display = "block";
+				inappropiateWords = true;
+			} 
+			if (!email.includes("@") && !email.includes("."))
+			{
+				document.getElementById("incorrectEmailFormat").style.display = "block";
+				wrongEmailFormat = true;
+			}
+			if (!inappropiateWords && !wrongEmailFormat) {
+				// In a browser environment, you cannot use the fs module directly.
+				// You would need to send an HTTP request to a server/API (we should do that) that handles the file operations.
+				// Example: Use fetch() to send data to a server endpoint.
+				const newData = {
+					"email": email,
+					"bug": bugDescription
+				};
+				fetch("http://localhost:3000/submit", {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(newData)
+				})
+				.then(response => response.json())
+				.then(data => {
+					window.close();
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+			}
+		});
+	</script>
+	</center>
+
+</body>
+</html>

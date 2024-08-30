@@ -1,0 +1,90 @@
+[
+	{
+		"ammo": "7.62x54mmR Rounds",
+		"score": 88.34
+	},
+	{
+		"ammo": ".308 Rounds",
+		"score": 88.17
+	},
+	{
+		"ammo": "12 Gauge Buckshot",
+		"score": 87.97
+	},
+	{
+		"ammo": "12 Gauge Slugs",
+		"score": 77.93
+	},
+	{
+		"ammo": "5.45x39mm Rounds",
+		"score": 72.44
+	},
+	{
+		"ammo": "5.56x45mm Rounds",
+		"score": 70.23
+	},
+	{
+		"ammo": "7.62x39mm Rounds",
+		"score": 67.31
+	},
+	{
+		"ammo": "Hunting Bolts",
+		"score": 61.91
+	},
+	{
+		"ammo": "12 Gauge Rubber Slugs",
+		"score": 61.18
+	},
+	{
+		"ammo": "40mm Explosive Rounds",
+		"score": 59.22
+	},
+	{
+		"ammo": "40mm Gas Rounds",
+		"score": 59.22
+	},
+	{
+		"ammo": "Feathered Bolts",
+		"score": 59.02
+	},
+	{
+		"ammo": "357 Rounds",
+		"score": 58.53
+	},
+	{
+		"ammo": "40mm Smoke Rounds",
+		"score": 58.25
+	},
+	{
+		"ammo": "Improvised Bolts",
+		"score": 57.63
+	},
+	{
+		"ammo": "9x39mm Armour Piercing Rounds",
+		"score": 51.49
+	},
+	{
+		"ammo": "9x39mm Rounds",
+		"score": 50.96
+	},
+	{
+		"ammo": "9x19mm Rounds",
+		"score": 35.59
+	},
+	{
+		"ammo": ".45 Rounds",
+		"score": 34.69
+	},
+	{
+		"ammo": ".380 Rounds",
+		"score": 33.41
+	},
+	{
+		"ammo": ".22 Rounds",
+		"score": 28.79
+	},
+	{
+		"ammo": "Flare Cartridges",
+		"score": 3.47
+	}
+]
