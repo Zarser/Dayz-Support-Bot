@@ -377,3 +377,49 @@ reportButton.addEventListener("click", () => {
     bugReportWindow.focus();
 });
 
+// weather forcasting
+
+const gamingWeatherResponses = [
+    "It's always good weather for gaming!",
+    "No need to worry about the weather when you've got games to play!",
+    "Rain or shine, it's the perfect time for gaming!",
+    "Sunny or not, the real adventure is in the game!",
+    "Why go outside when the best action is on your screen?",
+    "In the gaming world, the weather is always epic!",
+    "No matter the weather, it's always a great day to level up!",
+    "Cold outside? Perfect excuse to stay in and game!"
+];
+function isWeatherRelatedQuestion(userMessage) {
+    const weatherPhrases = [
+        "how's the weather", "is it raining", "is it sunny", "is it cold", 
+        "is it warm", "is it snowing", "is it windy", 
+        "what's the weather like", "what's the temperature", 
+        "how hot is it", "how cold is it"
+    ];
+
+   
+    return weatherPhrases.some(phrase => userMessage.includes(phrase));
+}
+
+
+function getRandomGamingWeatherResponse() {
+    const randomIndex = Math.floor(Math.random() * gamingWeatherResponses.length);
+    return gamingWeatherResponses[randomIndex];
+}
+
+
+async function handleUserInput() {
+    if (isBotTyping) {
+        return;
+    }
+    const userMessage = userInput.value.trim().toLowerCase();
+
+    
+    if (isWeatherRelatedQuestion(userMessage)) {
+        userInput.value = ""; 
+        displayUserMessage(userMessage);
+        const randomResponse = getRandomGamingWeatherResponse();
+        await simulateBotTyping(50, randomResponse);
+        return;
+    }
+}
