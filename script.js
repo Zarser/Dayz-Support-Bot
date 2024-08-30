@@ -58,6 +58,7 @@ function askBot(question) {
 // Main function to handle user input
 async function handleUserInput() {
     if (isBotTyping) {
+        console.log("Bot is typing. Input is temporarily disabled.");
         return;
     }
     const userMessage = userInput.value.trim().toLowerCase();
@@ -197,6 +198,7 @@ async function simulateBotTyping(delayForWords, botResponse) {
         if (typingElement.parentElement === chatBox) {
             chatBox.removeChild(typingElement);
             displayBotMessage(botResponse);
+            isBotTyping = false; // Ensure isBotTyping is reset
         }
     }
 
@@ -221,154 +223,84 @@ async function simulateBotTyping(delayForWords, botResponse) {
         event.stopPropagation();
         clearInterval(typingInterval);
         displayResponse();
+        skipButton.style.display = 'none'; // Hide the skip button after clicking
         console.log("Skip button clicked");
     });
 }
 
-
-
-
-// Helper function to match the question directly to avoid multiple operations
-async function checkJsonQuestions(question, jsonCategories) {
-    try {
-        for (const category of jsonCategories) {
-            const response = await fetch(`./${category}.json`);
-if (!response.ok) {
-    throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
-}
-            const jsonArray = await response.json();
-            for (const jsonField of jsonArray) {
-                if (question === cleanStringsKeepSpaces(jsonField["question"]).toLowerCase()) {
-                    simulateBotTyping(50, jsonField["answer"]);
-                    let numberOfLetters = countLetters(jsonField["answer"]);
-                    const result = [numberOfLetters, true];
-                    result.intValue = result[0];
-                    result.boolValue = result[1];
-                    return result; // Match found => return true immediately
-                }
-            }
-        }
-    } catch (error) {
-        console.error("Error loading or parsing JSON:", error);
-        return false; // Return false in case of error
-    }
-    return false; // No matches found in questions
+function cleanStringsKeepSpaces(str) {
+    return str.replace(/[^a-zA-Z0-9, ]/g, '');
 }
 
-async function findBestAnswer(question, keywordsCategories) {
-    try {
-        let bestAnswer = null;
-        let bestMatchScore = 0;
-        for (const keyword of keywordsCategories) {
-            const response = await fetch(`./${category}.json`);
-if (!response.ok) {
-    throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
-}
-            const jsonArray = await response.json();
-            for (const jsonField of jsonArray) {
-                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
-                let match = false; // Assume no match
-                for (const keywordInCombinations of keywordCombinations) {				// first go through the combinations
-					const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
-					if (regex.test(question)) {
-						match = true;
-						break;
-					}
-				}
-				if (!match) {															// if no matches happen, go through single keywords and match
-					for (const keywordInCombinations of keywordCombinations) {			
-						let keywordArray = keywordInCombinations.split(" ");
-						for (const keyword of keywordArray) {
-							const regex = new RegExp(`\\b${keyword}\\b`);
-							if (regex.test(question)) {
-								match = true;
-								break;
-							}
-						}
-					}
-				}
-                if (match) {															// if match, create a match score
-                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
-                    if (matchScore > bestMatchScore) {
-                        bestMatchScore = matchScore;
-                        bestAnswer = jsonField["answer"];
-						console.log("Best answer:" + bestAnswer);
-                    }
-                }
-            }
-        }
-        if (bestAnswer) {																// if best answer is found, return it.
-            simulateBotTyping(50, bestAnswer);
-            let numberOfLetters = countLetters(bestAnswer);
-            const result = [numberOfLetters, true];
-            result.intValue = result[0];
-            result.boolValue = result[1];
-            return result;
-        } else {
-			const result = [0, false];
-		}
-    } catch (error) {
-        console.error("Error loading or parsing JSON:", error);
-    }
-    return [0, false];
+function countLetters(str) {
+    const regex = /[a-zA-Z]/g;
+    const lettersArray = str.match(regex);
+    return lettersArray ? lettersArray.length : 0;
 }
 
-function checkQuestionMatch(userQuestion, keywordCombinationsString) {
-    let occurrences = 0;
-	// Check combinations of keywords
-    keywordCombinationsString.split('+').forEach(keywordCombo => {
-		if (userQuestion === keywordCombo) {
-			return 100;
-		}
-        const comboKeywordsArray = keywordCombo.split('+');
-        comboKeywordsArray.forEach(keyword => {
-            if (userQuestion.includes(keyword)) {
-				occurrences++;
-            }
-        });
-    });
-    // Check single keywords
-    keywordCombinationsString.split('+').forEach(keyword => {
-        const cleanedKeywordArray = keyword.split(" ");
-		cleanedKeywordArray.forEach(cleanedKeyword => {
-			if (userQuestion === cleanedKeyword) {
-				return 100;
-			}
-			const regex = new RegExp(`\\b${cleanedKeyword}\\b`, 'i');			
-			if (regex.test(userQuestion)) {
-				occurrences++;
-			}
-		});
-    });
-	// return occurences for a ranking system
-    return occurrences;
-}
+// Handle the report button click
+reportButton.addEventListener("click", function () {
+    window.location.href = "report.html";
+});
 
-// Helper function to count letters
-function countLetters(sentence) {
-	let numberOfLetters = 0;
-	for (const letter in sentence) {
-		numberOfLetters++;
-	}
-	return numberOfLetters;
-}
-
-// Helper function to clean out strings;
-function cleanStringsKeepSpaces(input) {
-    // Use a regular expression to replace any characters that are not letters or spaces
-    return input.replace(/[^a-zA-Z\s]/g, '');
-}
-
-popoverButton.addEventListener("click", () => {
+// Add event listener for popover button
+popoverButton.addEventListener("click", function () {
     popoverContent.classList.toggle("show");
 });
 
-reportButton.addEventListener("click", () => {
-    const bugReportWindow = window.open(
-        "report_form.html",
-        "Bug Report",
-        "width=700,height=500,left=" + (window.innerWidth / 2 - 200) + ",top=" + (window.innerHeight / 2 - 250)
-    );
-    bugReportWindow.focus();
-});
+// Function to check for JSON questions
+async function checkJsonQuestions(question, jsonFiles) {
+    for (const jsonFile of jsonFiles) {
+        try {
+            const response = await fetch(jsonFile + ".json");
+            const data = await response.json();
+            for (const [key, value] of Object.entries(data)) {
+                if (question.includes(key.toLowerCase())) {
+                    await simulateBotTyping(50, value);
+                    return { boolValue: true, intValue: countLetters(value) };
+                }
+            }
+        } catch (error) {
+            console.error(`Error loading or parsing JSON file: ${jsonFile}`, error);
+        }
+    }
+    return { boolValue: false, intValue: 0 };
+}
+
+// Function to find best answer based on keywords
+async function findBestAnswer(question, jsonFiles) {
+    let highestOccurrences = 0;
+    let bestMatchAnswer = "";
+
+    for (const jsonFile of jsonFiles) {
+        try {
+            const response = await fetch(jsonFile + ".json");
+            const data = await response.json();
+            for (const [key, value] of Object.entries(data)) {
+                const keyWordsArray = key.toLowerCase().split(", ");
+                let wordOccurrences = 0;
+
+                keyWordsArray.forEach(keyword => {
+                    if (question.includes(keyword)) {
+                        wordOccurrences++;
+                    }
+                });
+
+                if (wordOccurrences > highestOccurrences) {
+                    highestOccurrences = wordOccurrences;
+                    bestMatchAnswer = value;
+                }
+            }
+        } catch (error) {
+            console.error(`Error loading or parsing JSON file: ${jsonFile}`, error);
+        }
+    }
+
+    if (highestOccurrences > 0) {
+        await simulateBotTyping(50, bestMatchAnswer);
+        return { boolValue: true, intValue: countLetters(bestMatchAnswer) };
+    }
+
+    return { boolValue: false, intValue: 0 };
+}
 
