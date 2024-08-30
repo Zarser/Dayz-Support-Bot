@@ -230,12 +230,14 @@ async function checkJsonQuestions(question, jsonCategories) {
             const jsonArray = await fetchJsonFile(category);
             console.log(`Checking category: ${category}`);
             for (const jsonField of jsonArray) {
-                const jsonQuestion = cleanStringsKeepSpaces(jsonField["question"]).toLowerCase();
-                if (question === jsonQuestion) {
-                    console.log(`Match found for question: ${jsonField["question"]}`);
-                    simulateBotTyping(50, jsonField["answer"]);
-                    let numberOfLetters = countLetters(jsonField["answer"]);
-                    return { intValue: numberOfLetters, boolValue: true };
+                if (jsonField && typeof jsonField["question"] === "string" && typeof jsonField["answer"] === "string") {
+                    const jsonQuestion = cleanStringsKeepSpaces(jsonField["question"]).toLowerCase();
+                    if (question === jsonQuestion) {
+                        console.log(`Match found for question: ${jsonField["question"]}`);
+                        simulateBotTyping(50, jsonField["answer"]);
+                        let numberOfLetters = countLetters(jsonField["answer"]);
+                        return { intValue: numberOfLetters, boolValue: true };
+                    }
                 }
             }
         }
@@ -254,17 +256,19 @@ async function findBestAnswer(question, keywordsCategories) {
             const jsonArray = await fetchJsonFile(keyword);
             console.log(`Checking keywords file: ${keyword}`);
             for (const jsonField of jsonArray) {
-                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
-                let match = keywordCombinations.some(keywordInCombinations => {
-                    const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
-                    return regex.test(question);
-                });
-                if (match) {
-                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
-                    if (matchScore > bestMatchScore) {
-                        bestMatchScore = matchScore;
-                        bestAnswer = jsonField["answer"];
-                        console.log(`Best match found: ${bestAnswer}`);
+                if (jsonField && typeof jsonField["keyword"] === "string" && typeof jsonField["answer"] === "string") {
+                    const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
+                    let match = keywordCombinations.some(keywordInCombinations => {
+                        const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
+                        return regex.test(question);
+                    });
+                    if (match) {
+                        const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
+                        if (matchScore > bestMatchScore) {
+                            bestMatchScore = matchScore;
+                            bestAnswer = jsonField["answer"];
+                            console.log(`Best match found: ${bestAnswer}`);
+                        }
                     }
                 }
             }
