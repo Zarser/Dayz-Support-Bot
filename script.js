@@ -5,7 +5,6 @@ function checkTerms() {
         }
     } catch (error) {
         console.error("Error accessing local storage:", error);
-        // Handle the error (e.g., fallback behavior, show error message)
     }
 }
 
@@ -44,10 +43,19 @@ function getRandomResponse() {
     return randomResponses[randomIndex];
 }
 
-window.onload = async function () {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    simulateBotTyping(50, getRandomGreeting());
-};
+// Function to fetch JSON files
+async function fetchJsonFile(category) {
+    try {
+        const response = await fetch(`${category}.json`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching ${category}.json:`, error);
+        return [];
+    }
+}
 
 // Function for menu questions
 function askBot(question) {
@@ -74,15 +82,12 @@ async function handleUserInput() {
     }
 
     if (containsInappropriateKeyword) {
-        // Check if the count reaches 3
         if (inappropriateWordCount >= 3) {
-            // Redirect the browser to the specified YouTube URL
             window.location.href = "https://youtu.be/L3HQMbQAWRc?t=29";
             return;
         }
 
-        // Delete the inappropriate message and display a placeholder message
-        displayUserMessage("Message deleted", "color: red; font-weight: bold;" );
+        displayUserMessage("Message deleted", "color: red; font-weight: bold;");
         userInput.value = ""; // Clear the input field
         isBotTyping = true;
         const inappropriateResponses = [
@@ -98,76 +103,69 @@ async function handleUserInput() {
         isBotTyping = false;
         return;
     }
+
     // Handle greetings
-	const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');	
+    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
-        simulateBotTyping(50, randomGreeting).then(() => {
-            return new Promise(resolve => setTimeout(resolve, 1000));
-        }).then(() => {
-            isBotTyping = false;
-            userInput.value = ""; // Clear the input field
-        });
+        isBotTyping = true;
+        await simulateBotTyping(50, randomGreeting);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        isBotTyping = false;
+        userInput.value = ""; // Clear the input field
         return;
     }
 
     isBotTyping = true;
 
-
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-	// Look for answers based on question
+    // Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
         let numberOfLetters = 0;
-		question = cleanStringsKeepSpaces(question).toLowerCase();
+        question = cleanStringsKeepSpaces(question).toLowerCase();
         try {
-			// First check questions
-			let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
-            //
-
-            // let checkQuestionsWordsOccurences = false;
+            let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
             let checkKeywords = false;
-			if (checkQuestions.boolValue) {
-				numberOfLetters = checkQuestions.intValue;
-			} else { // If no question found in jsons, continue to keywords pairs and hope for the best
-				checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
-				if (checkKeywords.boolValue) {
-					numberOfLetters = checkKeywords.intValue;
-				}
-			}
-			// If all fails, give user some random input.
-            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {//&& !checkQuestionsWordsOccurences.boolValue ) {
+            if (checkQuestions.boolValue) {
+                numberOfLetters = checkQuestions.intValue;
+            } else {
+                checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
+                if (checkKeywords.boolValue) {
+                    numberOfLetters = checkKeywords.intValue;
+                }
+            }
+            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
                 const randomResponse = getRandomResponse();
-				numberOfLetters = countLetters(randomResponse);
-				await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
+                numberOfLetters = countLetters(randomResponse);
+                await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
                 await simulateBotTyping(50, randomResponse);
-				await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
         } catch (error) {
             console.error("An error occurred:", error);
         }
-		await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters != 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (numberOfLetters !== 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
     }
 }
-sendBtn.addEventListener("click", handleUserInput);				
-userInput.addEventListener("keydown", function(event) {			
+sendBtn.addEventListener("click", handleUserInput);
+userInput.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
-        event.preventDefault(); 
-        handleUserInput(); 
+        event.preventDefault();
+        handleUserInput();
         console.log("Send button clicked");
     }
 });
 
-// Function to display user input after enter/click
-// Helper function to display user input
+// Helper function to display user input after enter/click
 function displayUserMessage(message, style = "") {
     const userMessage = `<div class="user-message" style="color: white;"><strong>Creature</strong>: <span style="${style}">${message}</span></div>`;
     chatBox.innerHTML += userMessage;
@@ -225,149 +223,114 @@ async function simulateBotTyping(delayForWords, botResponse) {
     });
 }
 
-
-
-
 // Helper function to match the question directly to avoid multiple operations
 async function checkJsonQuestions(question, jsonCategories) {
     try {
         for (const category of jsonCategories) {
-            const response = await fetch(`${category}.json`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
-            }
-            const jsonArray = await response.json();
+            const jsonArray = await fetchJsonFile(category);
+            console.log(`Checking category: ${category}`);
             for (const jsonField of jsonArray) {
-                if (question === cleanStringsKeepSpaces(jsonField["question"]).toLowerCase()) {
+                const jsonQuestion = cleanStringsKeepSpaces(jsonField["question"]).toLowerCase();
+                if (question === jsonQuestion) {
+                    console.log(`Match found for question: ${jsonField["question"]}`);
                     simulateBotTyping(50, jsonField["answer"]);
                     let numberOfLetters = countLetters(jsonField["answer"]);
-                    const result = [numberOfLetters, true];
-                    result.intValue = result[0];
-                    result.boolValue = result[1];
-                    return result; // Match found => return true immediately
+                    return { intValue: numberOfLetters, boolValue: true };
                 }
             }
         }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
-        return false; // Return false in case of error
     }
-    return false; // No matches found in questions
+    return { intValue: 0, boolValue: false };
 }
 
+// Helper function to match best answer based on keyword combinations
 async function findBestAnswer(question, keywordsCategories) {
     try {
         let bestAnswer = null;
         let bestMatchScore = 0;
         for (const keyword of keywordsCategories) {
-            const response = await fetch(`./${keyword}.json`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ./${keyword}.json: ${response.status}`);
-            }
-            const jsonArray = await response.json();
+            const jsonArray = await fetchJsonFile(keyword);
+            console.log(`Checking keywords file: ${keyword}`);
             for (const jsonField of jsonArray) {
                 const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
-                let match = false; // Assume no match
-                for (const keywordInCombinations of keywordCombinations) {				// first go through the combinations
-					const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
-					if (regex.test(question)) {
-						match = true;
-						break;
-					}
-				}
-				if (!match) {															// if no matches happen, go through single keywords and match
-					for (const keywordInCombinations of keywordCombinations) {			
-						let keywordArray = keywordInCombinations.split(" ");
-						for (const keyword of keywordArray) {
-							const regex = new RegExp(`\\b${keyword}\\b`);
-							if (regex.test(question)) {
-								match = true;
-								break;
-							}
-						}
-					}
-				}
-                if (match) {															// if match, create a match score
+                let match = keywordCombinations.some(keywordInCombinations => {
+                    const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
+                    return regex.test(question);
+                });
+                if (match) {
                     const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
                     if (matchScore > bestMatchScore) {
                         bestMatchScore = matchScore;
                         bestAnswer = jsonField["answer"];
-						console.log("Best answer:" + bestAnswer);
+                        console.log(`Best match found: ${bestAnswer}`);
                     }
                 }
             }
         }
-        if (bestAnswer) {																// if best answer is found, return it.
+        if (bestAnswer) {
             simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
-            const result = [numberOfLetters, true];
-            result.intValue = result[0];
-            result.boolValue = result[1];
-            return result;
-        } else {
-			const result = [0, false];
-		}
+            return { intValue: numberOfLetters, boolValue: true };
+        }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
     }
-    return [0, false];
+    return { intValue: 0, boolValue: false };
 }
 
+// Helper function to clean and normalize input strings
+function cleanStringsKeepSpaces(input) {
+    return input.replace(/[^\w\s]/gi, '').trim();
+}
+
+// Helper function to count the number of letters in a string
+function countLetters(text) {
+    return (text.match(/[a-zA-Z]/g) || []).length;
+}
+
+// Helper function to check the match score for a question
 function checkQuestionMatch(userQuestion, keywordCombinationsString) {
     let occurrences = 0;
-	// Check combinations of keywords
-    keywordCombinationsString.split('+').forEach(keywordCombo => {
-		if (userQuestion === keywordCombo) {
-			return 100;
-		}
-        const comboKeywordsArray = keywordCombo.split('+');
-        comboKeywordsArray.forEach(keyword => {
+    const keywordCombinations = keywordCombinationsString.split('+');
+
+    keywordCombinations.forEach(combo => {
+        const comboKeywords = combo.split(' ');
+        if (comboKeywords.every(keyword => userQuestion.includes(keyword))) {
+            occurrences += 10; // Bonus for full match
+        }
+        comboKeywords.forEach(keyword => {
             if (userQuestion.includes(keyword)) {
-				occurrences++;
+                occurrences++;
             }
         });
     });
-    // Check single keywords
-    keywordCombinationsString.split('+').forEach(keyword => {
-        const cleanedKeywordArray = keyword.split(" ");
-		cleanedKeywordArray.forEach(cleanedKeyword => {
-			if (userQuestion === cleanedKeyword) {
-				return 100;
-			}
-			const regex = new RegExp(`\\b${cleanedKeyword}\\b`, 'i');			
-			if (regex.test(userQuestion)) {
-				occurrences++;
-			}
-		});
-    });
-	// return occurences for a ranking system
+
     return occurrences;
 }
 
-// Helper function to count letters
-function countLetters(sentence) {
-	let numberOfLetters = 0;
-	for (const letter in sentence) {
-		numberOfLetters++;
-	}
-	return numberOfLetters;
-}
+// Initialize the chatbox with a greeting
+displayBotMessage(getRandomGreeting());
 
-// Helper function to clean out strings;
-function cleanStringsKeepSpaces(input) {
-    // Use a regular expression to replace any characters that are not letters or spaces
-    return input.replace(/[^a-zA-Z\s]/g, '');
-}
-
-popoverButton.addEventListener("click", () => {
-    popoverContent.classList.toggle("show");
+// Add event listener for the report button
+reportButton.addEventListener("click", function () {
+    const reportMessage = "Report this message";
+    displayBotMessage(reportMessage);
+    console.log("Report button clicked");
 });
 
-reportButton.addEventListener("click", () => {
-    const bugReportWindow = window.open(
-        "report_form.html",
-        "Bug Report",
-        "width=700,height=500,left=" + (window.innerWidth / 2 - 200) + ",top=" + (window.innerHeight / 2 - 250)
-    );
-    bugReportWindow.focus();
+// Add event listener for the popover button
+popoverButton.addEventListener("click", function () {
+    const popoverContentText = "Popover content goes here!";
+    popoverContent.textContent = popoverContentText;
+    popoverContent.classList.toggle("show");
+    console.log("Popover button clicked");
+});
+
+// Add event listener for the skip button
+const skipButton = document.getElementById("skipButton");
+skipButton.addEventListener("click", function (event) {
+    event.stopPropagation();
+    // Handle skip button click
 });
