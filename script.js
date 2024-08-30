@@ -57,6 +57,57 @@ async function fetchJsonFile(category) {
     }
 }
 
+// Function to detect if the user's message relates to a specific category
+function detectCategory(userMessage) {
+    const normalizedMessage = userMessage.trim().toLowerCase();
+
+    for (const [category, keywords] of Object.entries(keywordCategories)) {
+        if (keywords.some(keyword => normalizedMessage.includes(keyword))) {
+            return category;
+        }
+    }
+    return null;
+}
+
+// Function to generate a dynamic response based on the detected category
+function generateResponse(category) {
+    if (category === "weather") {
+        const weatherResponses = [
+            "The weather outside is always perfect for a gaming session!",
+            "Whether it's raining or sunny, it's a great day to dive into your game!",
+            "I don't have real-time weather updates, but in-game, it's always the right weather for adventure!",
+            "No matter the forecast, the best weather is the one you enjoy with your game!",
+            "The weather? Let’s just say it's ideal for gaming - no matter what the actual forecast is!"
+        ];
+        return weatherResponses[Math.floor(Math.random() * weatherResponses.length)];
+    }
+
+    // Add responses for other categories
+    if (category === "gaming") {
+        const gamingResponses = [
+            "Gaming is always the best choice, no matter what!",
+            "In the world of gaming, every day is an adventure!",
+            "From epic battles to thrilling quests, it's always game time!",
+        ];
+        return gamingResponses[Math.floor(Math.random() * gamingResponses.length)];
+    }
+
+    // Default response if no category matches
+    return "I'm here to help with any questions you have!";
+}
+
+// Function to check for weather-related questions
+function isWeatherRelatedQuestion(userMessage) {
+    const weatherPhrases = [
+        "how's the weather", "is it raining", "is it sunny", "is it cold", 
+        "is it warm", "is it snowing", "is it windy", 
+        "what's the weather like", "what's the temperature", 
+        "how hot is it", "how cold is it"
+    ];
+
+    return weatherPhrases.some(phrase => userMessage.includes(phrase));
+}
+
 // Function for menu questions
 function askBot(question) {
     userInput.value = question;
@@ -68,7 +119,7 @@ async function handleUserInput() {
     if (isBotTyping) {
         return;
     }
-    const userMessage = userInput.value.trim().toLowerCase();
+    const userMessage = userInput.value.trim();
     let containsInappropriateKeyword = false;
 
     // Check for inappropriate keywords
@@ -99,6 +150,18 @@ async function handleUserInput() {
         ];
         const randomInappropriateResponse = inappropriateResponses[Math.floor(Math.random() * inappropriateResponses.length)];
         await simulateBotTyping(50, randomInappropriateResponse);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        isBotTyping = false;
+        return;
+    }
+
+    // Check if the user is asking about the weather
+    if (isWeatherRelatedQuestion(userMessage)) {
+        userInput.value = ""; // Clear the input field
+        displayUserMessage(userMessage);
+        isBotTyping = true;
+        const weatherResponse = generateResponse("weather");
+        await simulateBotTyping(50, weatherResponse);
         await new Promise(resolve => setTimeout(resolve, 1000));
         isBotTyping = false;
         return;
@@ -156,6 +219,7 @@ async function handleUserInput() {
         isBotTyping = false;
     }
 }
+
 sendBtn.addEventListener("click", handleUserInput);
 userInput.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
@@ -257,7 +321,6 @@ async function checkJsonQuestions(question, jsonCategories) {
     return { intValue: 0, boolValue: false };
 }
 
-
 // Helper function to match best answer based on keyword combinations
 async function findBestAnswer(question, keywordsCategories) {
     try {
@@ -307,8 +370,6 @@ async function findBestAnswer(question, keywordsCategories) {
     }
     return { intValue: 0, boolValue: false };
 }
-
-
 
 // Helper function to clean and normalize input strings
 function cleanStringsKeepSpaces(input) {
