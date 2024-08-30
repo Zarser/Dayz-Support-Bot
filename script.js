@@ -59,7 +59,7 @@ function getRandomResponse() {
 // Function to check for weather-related questions
 function isWeatherRelatedQuestion(userMessage) {
     const weatherPhrases = [
-        "how's the weather","hows the weater", "is it raining", "is it sunny", "is it cold", 
+        "how's the weather","hows the weather", "is it raining", "is it sunny", "is it cold", 
         "is it warm", "is it snowing", "is it windy", 
         "what's the weather like", "whats the weather like", "what's the temperature", "whats the temperature",
         "how hot is it", "how cold is it", "What's the weather like today", "Whats the weather like today", "What's the weather like in your country",
