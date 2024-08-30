@@ -52,8 +52,7 @@ const timeResponses = [
     "Dont your PC or consol have a clock?",
     "Its time to STFU and game!",
     "The only time thats exist, is the time in the virtual world of games.",
-    "Physicists define time as the progression of events from the past to the present into the future."
-    
+    "Physicists define time as the progression of events from the past to the present into the future.",
 ];
 
 let isBotTyping = false;
@@ -236,8 +235,8 @@ async function handleUserInput() {
             console.error("An error occurred:", error);
         }
         await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters !== 0) {
-            await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
+        if (numberOfLetters <= 0) {
+            displayBotMessage("I’m sorry, I don’t have an answer to that.");
         }
         isBotTyping = false;
     }
