@@ -260,3 +260,16 @@ function getFileContent(fileName) {
         .then(response => response.json())
         .catch(error => console.error(`Error fetching file ${fileName}:`, error));
 }
+
+popoverButton.addEventListener("click", () => {
+    popoverContent.classList.toggle("show");
+});
+
+reportButton.addEventListener("click", () => {
+    const bugReportWindow = window.open(
+        "report_form.html",
+        "Bug Report",
+        "width=700,height=500,left=" + (window.innerWidth / 2 - 200) + ",top=" + (window.innerHeight / 2 - 250)
+    );
+    bugReportWindow.focus();
+});
