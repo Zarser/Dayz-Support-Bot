@@ -1,3 +1,31 @@
+// Function to check for weather-related questions
+function isWeatherRelatedQuestion(userMessage) {
+    const weatherPhrases = [
+        "how's the weather","hows the weather", "is it raining", "is it rain", "is it sunny", "is it sun", "is it cold", 
+        "is it warm", "is it snowing", "is it windy", "is it hot", 
+        "what's the weather like", "whats the weather like", "whats the temperature", "what's the temperature", 
+        "how hot is it", "how cold is it"
+    ];
+
+    return weatherPhrases.some(phrase => userMessage.includes(phrase));
+}
+
+// Function to get a random gaming-related weather response
+function getRandomGamingWeatherResponse() {
+    const randomIndex = Math.floor(Math.random() * gamingWeatherResponses.length);
+    return gamingWeatherResponses[randomIndex];
+}
+
+// Weather-related responses
+const gamingWeatherResponses = [
+    "It's always good weather for gaming!",
+    "No matter the weather outside, it's a perfect day for gaming!",
+    "Weather's not a concern when you're in the game!",
+    "Sunshine or rain, it's always game time!",
+    "Weather? Just another excuse for a gaming marathon!"
+];
+
+// Function to check terms
 function checkTerms() {
     try {
         if (!localStorage.getItem("agreedToTerms")) {
@@ -20,6 +48,7 @@ const randomResponses = [
     "That's an interesting question for which I do not have an answer yet. Please submit any questions you didn't have an answer for so that we can fix it using the \"REPORT\" button!",
     "I'm still learning, but I'll do my best to help. If I am not providing the correct answer for your question, please report it using the \"REPORT\" button!",
 ];
+
 const greetings = [
     "Greetings, survivor!",
     "Hello there, adventurer!",
@@ -27,6 +56,7 @@ const greetings = [
     "Hey, survivor! Ready to dive into some DayZ knowledge?",
     "Greetings! What DayZ questions do you have?",
 ];
+
 const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard", "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy", "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker", "asshole", "bastard", "moron", "idiot", "anal"];
 let isBotTyping = false;
 let inappropriateWordCount = 0; // Variable to count inappropriate words
@@ -43,18 +73,14 @@ function getRandomResponse() {
     return randomResponses[randomIndex];
 }
 
-window.onload = async function () {
+// Function to handle weather-related questions
+async function handleWeatherQuestion() {
+    const randomWeatherResponse = getRandomGamingWeatherResponse();
+    await simulateBotTyping(50, randomWeatherResponse);
     await new Promise(resolve => setTimeout(resolve, 1000));
-    simulateBotTyping(50, getRandomGreeting());
-};
-
-// Function for menu questions
-function askBot(question) {
-    userInput.value = question;
-    handleUserInput();
 }
 
-// Main function to handle user input
+// Function to handle user input
 async function handleUserInput() {
     if (isBotTyping) {
         return;
@@ -98,6 +124,13 @@ async function handleUserInput() {
         return;
     }
 
+    // Handle weather-related questions
+    if (isWeatherRelatedQuestion(userMessage)) {
+        await handleWeatherQuestion();
+        userInput.value = ""; // Clear the input field
+        return;
+    }
+
     // Handle greetings
     const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');    
     if (greetingRegex.test(userMessage)) {
@@ -117,7 +150,7 @@ async function handleUserInput() {
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-
+    
     // Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
@@ -127,16 +160,15 @@ async function handleUserInput() {
         try {
             // First check questions
             let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
-
+            
             let checkKeywords = false;
-            if (!checkQuestions.boolValue) {
-                // If no question found in jsons, continue to keywords pairs and hope for the best
+            if (checkQuestions.boolValue) {
+                numberOfLetters = checkQuestions.intValue;
+            } else { // If no question found in jsons, continue to keywords pairs and hope for the best
                 checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
                 if (checkKeywords.boolValue) {
                     numberOfLetters = checkKeywords.intValue;
                 }
-            } else {
-                numberOfLetters = checkQuestions.intValue;
             }
 
             // If all fails, give user some random input.
@@ -178,9 +210,9 @@ function displayUserMessage(message, style = "") {
 // Helper function to display bot output
 function displayBotMessage(message) {
     const botMessage = `<div class="bot-message">
-        <img src="bot.png" alt="Robot" class="bot-avatar">
-        <span class="bot-text">${message}</span>
-    </div>`;
+    <img src="bot.png" alt="Robot" class="bot-avatar">
+    <span class="bot-text">${message}</span>
+</div>`;
     chatBox.innerHTML += botMessage;
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -230,25 +262,23 @@ async function simulateBotTyping(delayForWords, botResponse) {
 async function checkJsonQuestions(question, jsonCategories) {
     try {
         for (const category of jsonCategories) {
-            console.log(`Fetching ${category}.json`); // Debugging line
-            const response = await fetch(`./${category}.json`);
+            const response = await fetch(`${category}.json`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
             }
             const jsonArray = await response.json();
-            console.log(`Data fetched from ${category}.json:`, jsonArray); // Debugging line
 
             for (const jsonField of jsonArray) {
-                const questionVariants = [jsonField["question"].toLowerCase()].concat(jsonField["keywords"].map(keyword => keyword.toLowerCase()));
+                const questionVariants = jsonField["question"].toLowerCase().split('+'); // Split the question string
                 for (const variant of questionVariants) {
-                    if (question.includes(variant)) {
+                    if (question.includes(variant)) { // Check if the input includes any variant
                         console.log(`Match found for question: ${variant}`);
-                        await simulateBotTyping(50, jsonField["answer"]);
+                        simulateBotTyping(50, jsonField["answer"]);
                         let numberOfLetters = countLetters(jsonField["answer"]);
                         const result = [numberOfLetters, true];
                         result.intValue = result[0];
                         result.boolValue = result[1];
-                        return result;
+                        return result; // Match found => return true immediately
                     }
                 }
             }
@@ -256,45 +286,60 @@ async function checkJsonQuestions(question, jsonCategories) {
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
     }
-    return [0, false];
+    return false; // No matches found
 }
 
-// Helper function to count letters in a string
-function countLetters(string) {
-    return string.replace(/ /g, "").length;
-}
-
-// Function to clean input strings, keeping only letters and spaces
-function cleanStringsKeepSpaces(string) {
-    return string.replace(/[^a-zA-Z\s]/g, "").trim();
-}
-
-// Find best answer based on keywords
-async function findBestAnswer(question, jsonKeywordsFiles) {
+async function findBestAnswer(question, keywordsCategories) {
     try {
-        for (const category of jsonKeywordsFiles) {
-            console.log(`Fetching ${category}.json`); // Debugging line
+        let bestAnswer = null;
+        let bestMatchScore = 0;
+        for (const category of keywordsCategories) {
             const response = await fetch(`./${category}.json`);
             if (!response.ok) {
-                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
+                throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
             }
             const jsonArray = await response.json();
-            console.log(`Data fetched from ${category}.json:`, jsonArray); // Debugging line
-
             for (const jsonField of jsonArray) {
-                const questionVariants = [jsonField["question"].toLowerCase()].concat(jsonField["keywords"].map(keyword => keyword.toLowerCase()));
-                for (const variant of questionVariants) {
-                    if (question.includes(variant)) {
-                        console.log(`Match found for keyword: ${variant}`);
-                        await simulateBotTyping(50, jsonField["answer"]);
-                        let numberOfLetters = countLetters(jsonField["answer"]);
-                        const result = [numberOfLetters, true];
-                        result.intValue = result[0];
-                        result.boolValue = result[1];
-                        return result;
+                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
+                let match = false; // Assume no match
+                for (const keywordInCombinations of keywordCombinations) {                // first go through the combinations
+                    const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
+                    if (regex.test(question)) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (!match) {                                                            // if no matches happen, go through single keywords and match
+                    for (const keywordInCombinations of keywordCombinations) {            
+                        let keywordArray = keywordInCombinations.split(" ");
+                        for (const keyword of keywordArray) {
+                            const regex = new RegExp(`\\b${keyword}\\b`);
+                            if (regex.test(question)) {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (match) {                                                            // if match, create a match score
+                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
+                    if (matchScore > bestMatchScore) {
+                        bestMatchScore = matchScore;
+                        bestAnswer = jsonField["answer"];
+                        console.log("Best answer:" + bestAnswer);
                     }
                 }
             }
+        }
+        if (bestAnswer) {                                                                // if best answer is found, return it.
+            simulateBotTyping(50, bestAnswer);
+            let numberOfLetters = countLetters(bestAnswer);
+            const result = [numberOfLetters, true];
+            result.intValue = result[0];
+            result.boolValue = result[1];
+            return result;
+        } else {
+            const result = [0, false];
         }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
@@ -302,15 +347,61 @@ async function findBestAnswer(question, jsonKeywordsFiles) {
     return [0, false];
 }
 
-popoverButton.addEventListener("click", function() {
-    if (popoverContent.style.display === "none" || popoverContent.style.display === "") {
-        popoverContent.style.display = "block";
-    } else {
-        popoverContent.style.display = "none";
+function checkQuestionMatch(userQuestion, keywordCombinationsString) {
+    let occurrences = 0;
+    // Check combinations of keywords
+    keywordCombinationsString.split('+').forEach(keywordCombo => {
+        if (userQuestion === keywordCombo) {
+            return 100;
+        }
+        const comboKeywordsArray = keywordCombo.split('+');
+        comboKeywordsArray.forEach(keyword => {
+            if (userQuestion.includes(keyword)) {
+                occurrences++;
+            }
+        });
+    });
+    // Check single keywords
+    keywordCombinationsString.split('+').forEach(keyword => {
+        const cleanedKeywordArray = keyword.split(" ");
+        cleanedKeywordArray.forEach(cleanedKeyword => {
+            if (userQuestion === cleanedKeyword) {
+                return 100;
+            }
+            const regex = new RegExp(`\\b${cleanedKeyword}\\b`, 'i');            
+            if (regex.test(userQuestion)) {
+                occurrences++;
+            }
+        });
+    });
+    // return occurences for a ranking system
+    return occurrences;
+}
+
+// Helper function to count letters
+function countLetters(sentence) {
+    let numberOfLetters = 0;
+    for (const letter in sentence) {
+        numberOfLetters++;
     }
+    return numberOfLetters;
+}
+
+// Helper function to clean out strings
+function cleanStringsKeepSpaces(input) {
+    // Use a regular expression to replace any characters that are not letters or spaces
+    return input.replace(/[^a-zA-Z\s]/g, '');
+}
+
+popoverButton.addEventListener("click", () => {
+    popoverContent.classList.toggle("show");
 });
 
-reportButton.addEventListener("click", function() {
-    // Report button functionality here
-    alert("Thank you for reporting. We will look into it.");
+reportButton.addEventListener("click", () => {
+    const bugReportWindow = window.open(
+        "report_form.html",
+        "Bug Report",
+        "width=700,height=500,left=" + (window.innerWidth / 2 - 200) + ",top=" + (window.innerHeight / 2 - 250)
+    );
+    bugReportWindow.focus();
 });
