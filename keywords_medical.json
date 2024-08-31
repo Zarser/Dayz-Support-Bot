@@ -1,6 +1,6 @@
 [
 	{
-		"keyword": "sickness",
+		"keyword": ["sickness"],
 		"answer": "Here is a list of the threats: Cholera, Cold, Influenza (Flu), Salmonella, Chemical Poisoning, Heart Attack, Hemolytic Reaction, Brain Disease (Permanent)."
 	},
 	{
