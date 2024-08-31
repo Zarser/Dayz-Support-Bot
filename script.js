@@ -50,7 +50,9 @@ async function fetchJsonFile(category) {
         if (!response.ok) {
             throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
         }
-        return await response.json();
+        const jsonData = await response.json();
+        console.log(`Fetched data for ${category}:`, jsonData); // Log fetched data
+        return jsonData;
     } catch (error) {
         console.error(`Error fetching ${category}.json:`, error);
         return [];
@@ -255,6 +257,9 @@ async function findBestAnswer(question, keywordsCategories) {
             console.log(`Checking keywords file: ${keyword}`);
 
             for (const jsonField of jsonArray) {
+                // Log the entire jsonField to debug
+                console.log("Processing jsonField:", jsonField);
+
                 // Ensure 'keywords' field is an array and 'answer' is a string
                 const keywordsArray = jsonField["keywords"];
                 const answer = jsonField["answer"];
@@ -292,6 +297,7 @@ async function findBestAnswer(question, keywordsCategories) {
 
     return { intValue: 0, boolValue: false };
 }
+
 
 
 
