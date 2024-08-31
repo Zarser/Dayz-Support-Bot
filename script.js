@@ -249,35 +249,48 @@ async function findBestAnswer(question, keywordsCategories) {
     try {
         let bestAnswer = null;
         let bestMatchScore = 0;
+
         for (const keyword of keywordsCategories) {
             const jsonArray = await fetchJsonFile(keyword);
             console.log(`Checking keywords file: ${keyword}`);
+
             for (const jsonField of jsonArray) {
-                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
-                let match = keywordCombinations.some(keywordInCombinations => {
-                    const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
-                    return regex.test(question);
-                });
-                if (match) {
-                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
-                    if (matchScore > bestMatchScore) {
-                        bestMatchScore = matchScore;
-                        bestAnswer = jsonField["answer"];
-                        console.log(`Best match found: ${bestAnswer}`);
+                // Check if the keyword field is present and valid
+                const keywordString = jsonField["keyword"];
+                if (typeof keywordString === "string") {
+                    const keywordCombinations = keywordString.toLowerCase().split('+');
+                    let match = keywordCombinations.some(keywordInCombinations => {
+                        const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
+                        return regex.test(question);
+                    });
+
+                    if (match) {
+                        const matchScore = checkQuestionMatch(question, keywordString);
+                        if (matchScore > bestMatchScore) {
+                            bestMatchScore = matchScore;
+                            bestAnswer = jsonField["answer"];
+                            console.log(`Best match found: ${bestAnswer}`);
+                        }
                     }
+                } else {
+                    console.warn(`Expected 'keyword' to be a string, but got ${typeof keywordString}:`, keywordString);
                 }
             }
         }
+
         if (bestAnswer) {
             simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
             return { intValue: numberOfLetters, boolValue: true };
         }
+
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
     }
+
     return { intValue: 0, boolValue: false };
 }
+
 
 // Helper function to clean and normalize input strings
 function cleanStringsKeepSpaces(input) {
