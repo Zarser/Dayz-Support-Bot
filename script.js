@@ -255,31 +255,33 @@ async function findBestAnswer(question, keywordsCategories) {
             console.log(`Checking keywords file: ${keyword}`);
 
             for (const jsonField of jsonArray) {
-                // Check if the keyword field is present and valid
-                const keywordString = jsonField["keyword"];
-                if (typeof keywordString === "string") {
-                    const keywordCombinations = keywordString.toLowerCase().split('+');
-                    let match = keywordCombinations.some(keywordInCombinations => {
+                // Ensure 'keywords' field is an array and 'answer' is a string
+                const keywordsArray = jsonField["keywords"];
+                const answer = jsonField["answer"];
+
+                if (Array.isArray(keywordsArray) && typeof answer === "string") {
+                    // Check if the question matches any of the keywords
+                    let match = keywordsArray.some(keywordInCombinations => {
                         const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
                         return regex.test(question);
                     });
 
                     if (match) {
-                        const matchScore = checkQuestionMatch(question, keywordString);
+                        const matchScore = checkQuestionMatch(question, keywordsArray.join(' '));
                         if (matchScore > bestMatchScore) {
                             bestMatchScore = matchScore;
-                            bestAnswer = jsonField["answer"];
+                            bestAnswer = answer;
                             console.log(`Best match found: ${bestAnswer}`);
                         }
                     }
                 } else {
-                    console.warn(`Expected 'keyword' to be a string, but got ${typeof keywordString}:`, keywordString);
+                    console.warn(`Expected 'keywords' to be an array and 'answer' to be a string, but got keywords: ${typeof keywordsArray}, answer: ${typeof answer}`);
                 }
             }
         }
 
         if (bestAnswer) {
-            simulateBotTyping(50, bestAnswer);
+            await simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
             return { intValue: numberOfLetters, boolValue: true };
         }
@@ -290,6 +292,7 @@ async function findBestAnswer(question, keywordsCategories) {
 
     return { intValue: 0, boolValue: false };
 }
+
 
 
 // Helper function to clean and normalize input strings
