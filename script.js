@@ -143,6 +143,13 @@ async function simulateBotTyping(delayForWords, botResponse) {
     });
 }
 
+// Function to handle the predefined questions from buttons
+function askBot(question) {
+    const userInput = document.getElementById("userInput");
+    userInput.value = question;
+    handleUserInput({ preventDefault: () => {} });
+}
+
 // Helper function to match the question directly to avoid multiple operations
 async function checkJsonQuestions(question, jsonCategories) {
     try {
@@ -214,132 +221,85 @@ async function findBestAnswer(question, keywordsCategories) {
                     if (matchScore > bestMatchScore) {
                         bestMatchScore = matchScore;
                         bestAnswer = jsonField["answer"];
-                        console.log("Best answer:" + bestAnswer);
                     }
                 }
             }
         }
-        if (bestAnswer) {
-            simulateBotTyping(50, bestAnswer);
-            let numberOfLetters = countLetters(bestAnswer);
-            const result = [numberOfLetters, true];
-            result.intValue = result[0];
-            result.boolValue = result[1];
+        if (bestAnswer !== null) {
+            let delayForWords = bestAnswer.split(' ').length * 80;
+            simulateBotTyping(delayForWords, bestAnswer);
+            const result = [countLetters(bestAnswer), true];
             return result;
         }
-        return [0, false];
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
-        return [0, false];
     }
+    return [0, false];
 }
 
-function checkQuestionMatch(userQuestion, keywordCombinationsString) {
-    let occurrences = 0;
-    keywordCombinationsString.split('+').forEach(keywordCombo => {
-        if (userQuestion === keywordCombo) {
-            return 100;
+function checkQuestionMatch(question, keywordString) {
+    const keywordCombinations = keywordString.split('+');
+    let matchCount = 0;
+    for (const keywordInCombinations of keywordCombinations) {
+        if (question.toLowerCase().includes(keywordInCombinations.toLowerCase())) {
+            matchCount++;
         }
-        const comboKeywordsArray = keywordCombo.split('+');
-        comboKeywordsArray.forEach(keyword => {
-            if (userQuestion.includes(keyword)) {
-                occurrences++;
-            }
-        });
-    });
-    keywordCombinationsString.split('+').forEach(keyword => {
-        const cleanedKeywordArray = keyword.split(" ");
-        cleanedKeywordArray.forEach(cleanedKeyword => {
-            if (userQuestion === cleanedKeyword) {
-                return 100;
-            }
-            const regex = new RegExp(`\\b${cleanedKeyword}\\b`, 'i');
-            if (regex.test(userQuestion)) {
-                occurrences++;
-            }
-        });
-    });
-    return occurrences;
-}
-
-// Helper function to count letters
-function countLetters(sentence) {
-    return sentence.length;
-}
-
-// Handle weather or time queries
-function handleWeatherOrTime(query) {
-    const lowerQuery = query.toLowerCase();
-    if (lowerQuery.includes("weather")) {
-        const response = getRandomWeatherResponse();
-        simulateBotTyping(50, response);
-        return true;
     }
-    if (lowerQuery.includes("time")) {
-        const response = getRandomTimeResponse();
-        simulateBotTyping(50, response);
-        return true;
-    }
-    return false;
+    return matchCount;
 }
 
+// Count the letters in a string
+function countLetters(inputString) {
+    return inputString.length;
+}
+
+// Main function to handle user input
 async function handleUserInput(event) {
     event.preventDefault();
-    const userQuestion = userInput.value.trim();
-    displayUserMessage(userQuestion);
-
-    // Handle weather or time queries
-    if (handleWeatherOrTime(userQuestion)) {
-        userInput.value = "";
-        return;
-    }
-
-    // Handle inappropriate content
-    const cleanedQuestion = cleanStringsKeepSpaces(userQuestion).toLowerCase();
-    if (inappropriateKeywords.some(keyword => cleanedQuestion.includes(keyword))) {
+    let question = userInput.value.trim();
+    if (!question) return;
+    displayUserMessage(question);
+    userInput.value = "";
+    let cleanedQuestion = cleanStringsKeepSpaces(question);
+    let containsInappropriateWord = inappropriateKeywords.some((keyword) =>
+        cleanedQuestion.toLowerCase().includes(keyword.toLowerCase())
+    );
+    if (containsInappropriateWord) {
         inappropriateWordCount++;
-        if (inappropriateWordCount >= 3) {
-            simulateBotTyping(50, getRandomResponse());
-            userInput.value = "";
+        if (inappropriateWordCount > 2) {
+            simulateBotTyping(50, "Your question contains inappropriate content. The chat is being terminated.");
+            return;
+        } else {
+            simulateBotTyping(50, "Please avoid inappropriate language.");
             return;
         }
     }
-
-    // Check JSON questions
-    const [numberOfLetters, found] = await checkJsonQuestions(userQuestion, ["questions", "faqs"]);
-    if (found) {
-        userInput.value = "";
+    let delayForWords = question.split(' ').length * 50;
+    if (question.toLowerCase().includes("weather")) {
+        let response = getRandomWeatherResponse();
+        await simulateBotTyping(delayForWords, response);
         return;
     }
-
-    // Find the best answer
-    const [bestAnswerCount, foundBestAnswer] = await findBestAnswer(userQuestion, ["keywords", "terms"]);
-    if (foundBestAnswer) {
-        userInput.value = "";
+    if (question.toLowerCase().includes("time")) {
+        let response = getRandomTimeResponse();
+        await simulateBotTyping(delayForWords, response);
         return;
     }
-
-    // Default response
-    simulateBotTyping(50, getRandomResponse());
-    userInput.value = "";
+    let [numLetters, foundAnswer] = await checkJsonQuestions(question, ["questions"]);
+    if (foundAnswer) {
+        return;
+    }
+    let [bestAnswer, bestMatch] = await findBestAnswer(question, ["keywords"]);
+    if (bestMatch) {
+        return;
+    }
+    let botResponse = getRandomResponse();
+    delayForWords = botResponse.split(' ').length * 50;
+    await simulateBotTyping(delayForWords, botResponse);
 }
 
+// Event listeners
 sendBtn.addEventListener("click", handleUserInput);
-userInput.addEventListener("keypress", (event) => {
-    if (event.key === "Enter") {
-        handleUserInput(event);
-    }
-});
-
-popoverButton.addEventListener("click", () => {
-    popoverContent.classList.toggle("show");
-});
-
 reportButton.addEventListener("click", () => {
-    const bugReportWindow = window.open(
-        "report_form.html",
-        "Bug Report",
-        "width=700,height=500,left=" + (window.innerWidth / 2 - 200) + ",top=" + (window.innerHeight / 2 - 250)
-    );
-    bugReportWindow.focus();
+    window.open('report.html', '_blank');
 });
