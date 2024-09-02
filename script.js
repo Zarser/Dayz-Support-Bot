@@ -209,13 +209,10 @@ async function simulateBotTyping(delayForWords, botResponse) {
         }
     }, delayForWords);
 
-    // Create and append skip button to the document body
-    const skipButton = document.getElementById("skipButton");
+    const skipButton = document.createElement("button");
     skipButton.textContent = "Skip";
     skipButton.classList.add("skip-button");
-    document.body.appendChild(skipButton);
-
-    // Event listener to remove typing effect and display full message when skip button is clicked
+    typingElement.appendChild(skipButton);
     skipButton.addEventListener("click", () => {
         clearInterval(typingInterval);
         displayResponse();
@@ -243,12 +240,17 @@ async function checkJsonQuestions(question, jsonCategoriesFiles) {
 
             const jsonArray = await response.json();
             for (const jsonField of jsonArray) {
-                const questionKeywords = jsonField["keyword"].toLowerCase().split("+");
-                if (questionKeywords.some(keyword => question.includes(keyword))) {
-                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
-                    if (matchScore > 0) {
-                        return [countLetters(jsonField["answer"]), true];
+                const keyword = jsonField["keyword"];
+                if (keyword) {
+                    const questionKeywords = keyword.toLowerCase().split("+");
+                    if (questionKeywords.some(keyword => question.includes(keyword))) {
+                        const matchScore = checkQuestionMatch(question, keyword);
+                        if (matchScore > 0) {
+                            return [countLetters(jsonField["answer"]), true];
+                        }
                     }
+                } else {
+                    console.warn(`Warning: "keyword" field is missing in jsonField:`, jsonField);
                 }
             }
         }
@@ -276,34 +278,39 @@ async function findBestAnswer(question, keywordsCategories) {
 
             const jsonArray = await response.json();
             for (const jsonField of jsonArray) {
-                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
-                let match = false; // Assume no match
-                for (const keywordInCombinations of keywordCombinations) {
-                    const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
-                    if (regex.test(question)) {
-                        match = true;
-                        break;
-                    }
-                }
-                if (!match) { // if no matches happen, go through single keywords and match
+                const keywordField = jsonField["keyword"];
+                if (keywordField) {
+                    const keywordCombinations = keywordField.toLowerCase().split('+');
+                    let match = false; // Assume no match
                     for (const keywordInCombinations of keywordCombinations) {
-                        let keywordArray = keywordInCombinations.split(" ");
-                        for (const keyword of keywordArray) {
-                            const regex = new RegExp(`\\b${keyword}\\b`);
-                            if (regex.test(question)) {
-                                match = true;
-                                break;
+                        const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
+                        if (regex.test(question)) {
+                            match = true;
+                            break;
+                        }
+                    }
+                    if (!match) { // if no matches happen, go through single keywords and match
+                        for (const keywordInCombinations of keywordCombinations) {
+                            let keywordArray = keywordInCombinations.split(" ");
+                            for (const keyword of keywordArray) {
+                                const regex = new RegExp(`\\b${keyword}\\b`);
+                                if (regex.test(question)) {
+                                    match = true;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                if (match) { // if match, create a match score
-                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
-                    if (matchScore > bestMatchScore) {
-                        bestMatchScore = matchScore;
-                        bestAnswer = jsonField["answer"];
-                        console.log("Best answer:" + bestAnswer);
+                    if (match) { // if match, create a match score
+                        const matchScore = checkQuestionMatch(question, keywordField);
+                        if (matchScore > bestMatchScore) {
+                            bestMatchScore = matchScore;
+                            bestAnswer = jsonField["answer"];
+                            console.log("Best answer:" + bestAnswer);
+                        }
                     }
+                } else {
+                    console.warn(`Warning: "keyword" field is missing in jsonField:`, jsonField);
                 }
             }
         }
