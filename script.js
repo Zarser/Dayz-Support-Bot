@@ -45,7 +45,6 @@ const timeResponses = [
     "Time is but a construct, let's focus on the game!",
 ];
 
-let isBotTyping = false;
 let inappropriateWordCount = 0;
 
 // Function to get random greeting from the array
@@ -71,9 +70,6 @@ function getRandomTimeResponse() {
     const randomIndex = Math.floor(Math.random() * timeResponses.length);
     return timeResponses[randomIndex];
 }
-
-let isBotTyping = false;
-let inappropriateWordCount = 0;
 
 // Function to clean out strings
 function cleanStringsKeepSpaces(input) {
@@ -271,6 +267,7 @@ function countLetters(sentence) {
     return sentence.length;
 }
 
+// Handle weather or time queries
 function handleWeatherOrTime(query) {
     const lowerQuery = query.toLowerCase();
     if (lowerQuery.includes("weather")) {
