@@ -232,10 +232,11 @@ async function simulateBotTyping(delayForWords, botResponse) {
 async function checkJsonQuestions(question, jsonCategories) {
     try {
         for (const category of jsonCategories) {
-            const response = await fetch(`${category}.json`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
-            }
+            const response = await fetch(`./${category}.json`);
+if (!response.ok) {
+    throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
+}
+
             const jsonArray = await response.json();
             for (const jsonField of jsonArray) {
                 if (question === cleanStringsKeepSpaces(jsonField["question"]).toLowerCase()) {
@@ -260,10 +261,11 @@ async function findBestAnswer(question, keywordsCategories) {
         let bestAnswer = null;
         let bestMatchScore = 0;
         for (const keyword of keywordsCategories) {
-            const response = await fetch(`./${keyword}.json`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ./${keyword}.json: ${response.status}`);
-            }
+            const response = await fetch(`./${category}.json`);
+if (!response.ok) {
+    throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
+}
+
             const jsonArray = await response.json();
             for (const jsonField of jsonArray) {
                 const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
