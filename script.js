@@ -98,6 +98,7 @@ async function handleUserInput() {
         isBotTyping = false;
         return;
     }
+
     // Handle greetings
     const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
     if (greetingRegex.test(userMessage)) {
@@ -148,7 +149,7 @@ async function handleUserInput() {
             console.error("An error occurred:", error);
         }
         await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters != 0) {
+        if (numberOfLetters !== 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
@@ -215,18 +216,26 @@ async function simulateBotTyping(delayForWords, botResponse) {
     document.body.appendChild(skipButton);
 
     // Event listener to remove typing effect and display full message when skip button is clicked
-    skipButton.addEventListener("click", (event) => {
-        event.stopPropagation();
+    skipButton.addEventListener("click", () => {
         clearInterval(typingInterval);
         displayResponse();
-        console.log("Skip button clicked");
+        skipButton.remove();
     });
 }
 
-// Helper function to match the question directly to avoid multiple operations
-async function checkJsonQuestions(question, jsonCategories) {
+// Function to clean strings and keep spaces
+function cleanStringsKeepSpaces(input) {
+    if (typeof input !== 'string') {
+        throw new TypeError("Input must be a string");
+    }
+    // Remove unnecessary spaces
+    return input.replace(/\s+/g, ' ').trim();
+}
+
+// Function to check JSON questions
+async function checkJsonQuestions(question, jsonCategoriesFiles) {
     try {
-        for (const category of jsonCategories) {
+        for (const category of jsonCategoriesFiles) {
             const response = await fetch(`./${category}.json`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
