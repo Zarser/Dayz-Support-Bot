@@ -257,14 +257,11 @@ async function findBestAnswer(question, keywordsCategories) {
             console.log(`Checking keywords file: ${keyword}`);
 
             for (const jsonField of jsonArray) {
-                // Log the entire jsonField to debug
-                console.log("Processing jsonField:", jsonField);
+                // Check if the keywords and answer fields are defined and of the expected types
+                if (Array.isArray(jsonField["keywords"]) && typeof jsonField["answer"] === "string") {
+                    const keywordsArray = jsonField["keywords"];
+                    const answer = jsonField["answer"];
 
-                // Ensure 'keywords' field is an array and 'answer' is a string
-                const keywordsArray = jsonField["keywords"];
-                const answer = jsonField["answer"];
-
-                if (Array.isArray(keywordsArray) && typeof answer === "string") {
                     // Check if the question matches any of the keywords
                     let match = keywordsArray.some(keywordInCombinations => {
                         const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
@@ -280,7 +277,7 @@ async function findBestAnswer(question, keywordsCategories) {
                         }
                     }
                 } else {
-                    console.warn(`Expected 'keywords' to be an array and 'answer' to be a string, but got keywords: ${typeof keywordsArray}, answer: ${typeof answer}`);
+                    console.warn(`Expected 'keywords' to be an array and 'answer' to be a string, but got keywords: ${typeof jsonField["keywords"]}, answer: ${typeof jsonField["answer"]}`);
                 }
             }
         }
