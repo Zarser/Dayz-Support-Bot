@@ -1,54 +1,54 @@
 [
 	{
-		"keyword": "assault rifle+AR+Assault weapons+automatic rifle+automatic gun+auto+full auto+fullauto+automatic weapon+full auto weapon+full auto+autorifle+fullautorifle+full autorifle",
+		"keywords": "assault rifle+AR+Assault weapons+automatic rifle+automatic gun+auto+full auto+fullauto+automatic weapon+full auto weapon+full auto+autorifle+fullautorifle+full autorifle",
 		"answer": "Based on damage, in the Vanilla version the best assault rifle is the AUR AX."
 	},
 	{
-		"keyword": "gun+firearm+firearms+guns+best gun",
+		"keywords": "gun+firearm+firearms+guns+best gun",
 		"answer": "There are multiple good weapons in the game. Please specify the gun's caliber as well in order to provide an accurate answer."
 	},
 	{
-		"keyword": "Rifle+rifles+Semi-automatic rifles+semi-auto gun+semi-auto rifle+Semi-automatic rifle+sar+semigun+semi weapon+semi rifle+Semi-automatic gun",
+		"keywords": "Rifle+rifles+Semi-automatic rifles+semi-auto gun+semi-auto rifle+Semi-automatic rifle+sar+semigun+semi weapon+semi rifle+Semi-automatic gun",
 		"answer": "Based on damage, in the Vanilla version the best rifle is the SK 5966."
 	},
 	{
-		"keyword": "Best 5.56x45mm gun+5.56x45mm gun+556+5.56+556 gun+5.56gun+55.6 gun+55.6+best 556 gun+best 5.56 gun",
+		"keywords": "Best 5.56x45mm gun+5.56x45mm gun+556+5.56+556 gun+5.56gun+55.6 gun+55.6+best 556 gun+best 5.56 gun",
 		"answer": "Based on damage, in the Vanilla version the best assault rifle that uses 5.56x45mm is the AUR AX."
 	},
 	{
-		"keyword": "Best .308 gun+best 308 gun+308 gun+308+.308+.308 gun+best 3o8 gun+best three o eight gun+best .308 WIN gun+best 308 WIN gun+308 WIN gun+308 gun+ gun 308+308 gun",
+		"keywords": "Best .308 gun+best 308 gun+308 gun+308+.308+.308 gun+best 3o8 gun+best three o eight gun+best .308 WIN gun+best 308 WIN gun+308 WIN gun+308 gun+ gun 308+308 gun",
 		"answer": "Based on damage, in the Vanilla version the best battle rifle that uses .308 WIN is the LAR."
 	},
 	{
-		"keyword": "Best 7.62x39mm gun+best 762 39 gun+7.62x39mm gun+7.62x39mm assault rifle best+7.62x39mm AR best",
+		"keywords": "Best 7.62x39mm gun+best 762 39 gun+7.62x39mm gun+7.62x39mm assault rifle best+7.62x39mm AR best",
 		"answer": "Based on damage, in the Vanilla version the best assault rifle that uses 7.62x39mm is the KAM."
 	},
 	{
-		"keyword": "Caliber",
+		"keywords": "Caliber",
 		"answer": ""
 	},
 	{
-		"keyword": "Ballistics",
+		"keywords": "Ballistics",
 		"answer": ""
 	},
 	{
-		"keyword": "Military-grade rifles",
+		"keywords": "Military-grade rifles",
 		"answer": ""
 	},
 	{
-		"keyword": "Weapon accessories",
+		"keywords": "Weapon accessories",
 		"answer": ""
 	},
 	{
-		"keyword": "Ammunition types",
+		"keywords": "Ammunition types",
 		"answer": ""
 	},
 	{
-		"keyword": "Weapon cat+weapon category+weapon categories+gun category+category of guns+categories for weapons+categories for guns+guns categories+guns cat",
+		"keywords": "Weapon cat+weapon category+weapon categories+gun category+category of guns+categories for weapons+categories for guns+guns categories+guns cat",
 		"answer": "Weapon categories in DayZ: melee, Handguns, Shotguns, Submachine Guns, Assault Rifles, Battle Rifles, Bolt-Action Rifles, Break-Action Rifles, Lever-Action Rifles, Marksman Rifles, Semi-Automatic Rifles, and Explosives."
 	},
 	{
-		"keyword": "attachements+attachements in dayz+weapon att+weapons attachements+gun attachements+gun mods+weapon mods+mods for weapons+mods for guns",
+		"keywords": "attachements+attachements in dayz+weapon att+weapons attachements+gun attachements+gun mods+weapon mods+mods for weapons+mods for guns",
 		"answer": "Attachements in DayZ: buttstocks, Handguards, Scopes, Rail, Muzzles, Wraps, Bayonets, Underslung."
 	}
 ]
