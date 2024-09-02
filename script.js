@@ -72,141 +72,17 @@ function getRandomTimeResponse() {
     return timeResponses[randomIndex];
 }
 
-window.onload = async function () {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    simulateBotTyping(50, getRandomGreeting());
-};
+let isBotTyping = false;
+let inappropriateWordCount = 0;
 
-// Function for menu questions
-function askBot(question) {
-    userInput.value = question;
-    handleUserInput();
+// Function to clean out strings
+function cleanStringsKeepSpaces(input) {
+    if (typeof input === 'string') {
+        return input.replace(/[^a-zA-Z\s]/g, '');
+    }
+    console.error("Input is not a string");
+    return '';
 }
-
-// Main function to handle user input
-async function handleUserInput() {
-    if (isBotTyping) {
-        return;
-    }
-    const userMessage = userInput.value.trim().toLowerCase();
-    let containsInappropriateKeyword = false;
-
-    // Check for inappropriate keywords
-    for (const keyword of inappropriateKeywords) {
-        const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
-        if (keywordRegex.test(userMessage)) {
-            containsInappropriateKeyword = true;
-            inappropriateWordCount++;
-            break;
-        }
-    }
-
-    if (containsInappropriateKeyword) {
-        if (inappropriateWordCount >= 3) {
-            window.location.href = "https://youtu.be/L3HQMbQAWRc?t=29";
-            return;
-        }
-
-        displayUserMessage("Message deleted", "color: red; font-weight: bold;");
-        userInput.value = "";
-        isBotTyping = true;
-        const inappropriateResponses = [
-            "That wasn't very nice...",
-            "Oh my, you can't write that!",
-            "Wash those fingers!",
-            "I'm sorry, but I can't respond to inappropriate content.",
-            "Inappropriate content is not welcome here.",
-        ];
-        const randomInappropriateResponse = inappropriateResponses[Math.floor(Math.random() * inappropriateResponses.length)];
-        await simulateBotTyping(50, randomInappropriateResponse);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        isBotTyping = false;
-        return;
-    }
-
-    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
-    if (greetingRegex.test(userMessage)) {
-        const randomGreeting = getRandomGreeting();
-        displayUserMessage(userMessage);
-        isBotTyping = true;
-        await simulateBotTyping(50, randomGreeting);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        isBotTyping = false;
-        userInput.value = "";
-        return;
-    }
-
-    const weatherRegex = new RegExp(`\\b(weather|temperature|forecast|climate)\\b`, 'i');
-    if (weatherRegex.test(userMessage)) {
-        const randomWeatherResponse = getRandomWeatherResponse();
-        displayUserMessage(userMessage);
-        isBotTyping = true;
-        await simulateBotTyping(50, randomWeatherResponse);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        isBotTyping = false;
-        userInput.value = "";
-        return;
-    }
-
-    const timeRegex = new RegExp(`\\b(time|clock|current time)\\b`, 'i');
-    if (timeRegex.test(userMessage)) {
-        const randomTimeResponse = getRandomTimeResponse();
-        displayUserMessage(userMessage);
-        isBotTyping = true;
-        await simulateBotTyping(50, randomTimeResponse);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        isBotTyping = false;
-        userInput.value = "";
-        return;
-    }
-
-    isBotTyping = true;
-    const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
-    const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
-    let question = userInput.value.trim();
-
-    if (question !== "") {
-        displayUserMessage(question);
-        userInput.value = "";
-        let numberOfLetters = 0;
-        question = cleanStringsKeepSpaces(question).toLowerCase();
-        try {
-            let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
-            let checkKeywords = false;
-            if (checkQuestions.boolValue) {
-                numberOfLetters = checkQuestions.intValue;
-            } else {
-                checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
-                if (checkKeywords.boolValue) {
-                    numberOfLetters = checkKeywords.intValue;
-                }
-            }
-            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
-                const randomResponse = getRandomResponse();
-                numberOfLetters = countLetters(randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
-                await simulateBotTyping(50, randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-        } catch (error) {
-            console.error("An error occurred:", error);
-        }
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters != 0) {
-            await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
-        }
-        isBotTyping = false;
-    }
-}
-
-sendBtn.addEventListener("click", handleUserInput);
-userInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        handleUserInput();
-        console.log("Send button clicked");
-    }
-});
 
 // Function to display user input after enter/click
 function displayUserMessage(message, style = "") {
@@ -281,7 +157,9 @@ async function checkJsonQuestions(question, jsonCategories) {
             }
             const jsonArray = await response.json();
             for (const jsonField of jsonArray) {
-                if (question === cleanStringsKeepSpaces(jsonField["question"]).toLowerCase()) {
+                const cleanedQuestion = cleanStringsKeepSpaces(question).toLowerCase();
+                const cleanedFieldQuestion = cleanStringsKeepSpaces(jsonField["question"]).toLowerCase();
+                if (cleanedQuestion === cleanedFieldQuestion) {
                     simulateBotTyping(50, jsonField["answer"]);
                     let numberOfLetters = countLetters(jsonField["answer"]);
                     const result = [numberOfLetters, true];
@@ -309,10 +187,15 @@ async function findBestAnswer(question, keywordsCategories) {
             }
             const jsonArray = await response.json();
             for (const jsonField of jsonArray) {
-                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
+                const keywordString = jsonField["keyword"];
+                if (typeof keywordString !== 'string') {
+                    console.error("Invalid keyword format:", keywordString);
+                    continue;
+                }
+                const keywordCombinations = keywordString.toLowerCase().split('+');
                 let match = false;
                 for (const keywordInCombinations of keywordCombinations) {
-                    const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
+                    const regex = new RegExp(`\\b${keywordInCombinations}\\b`, 'i');
                     if (regex.test(question)) {
                         match = true;
                         break;
@@ -322,7 +205,7 @@ async function findBestAnswer(question, keywordsCategories) {
                     for (const keywordInCombinations of keywordCombinations) {
                         let keywordArray = keywordInCombinations.split(" ");
                         for (const keyword of keywordArray) {
-                            const regex = new RegExp(`\\b${keyword}\\b`);
+                            const regex = new RegExp(`\\b${keyword}\\b`, 'i');
                             if (regex.test(question)) {
                                 match = true;
                                 break;
@@ -331,7 +214,7 @@ async function findBestAnswer(question, keywordsCategories) {
                     }
                 }
                 if (match) {
-                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
+                    const matchScore = checkQuestionMatch(question, keywordString);
                     if (matchScore > bestMatchScore) {
                         bestMatchScore = matchScore;
                         bestAnswer = jsonField["answer"];
@@ -388,14 +271,68 @@ function countLetters(sentence) {
     return sentence.length;
 }
 
-// Helper function to clean out strings
-function cleanStringsKeepSpaces(input) {
-    if (typeof input === 'string') {
-        return input.replace(/[^a-zA-Z\s]/g, '');
+function handleWeatherOrTime(query) {
+    const lowerQuery = query.toLowerCase();
+    if (lowerQuery.includes("weather")) {
+        const response = getRandomWeatherResponse();
+        simulateBotTyping(50, response);
+        return true;
     }
-    console.error("Input is not a string");
-    return '';
+    if (lowerQuery.includes("time")) {
+        const response = getRandomTimeResponse();
+        simulateBotTyping(50, response);
+        return true;
+    }
+    return false;
 }
+
+async function handleUserInput(event) {
+    event.preventDefault();
+    const userQuestion = userInput.value.trim();
+    displayUserMessage(userQuestion);
+
+    // Handle weather or time queries
+    if (handleWeatherOrTime(userQuestion)) {
+        userInput.value = "";
+        return;
+    }
+
+    // Handle inappropriate content
+    const cleanedQuestion = cleanStringsKeepSpaces(userQuestion).toLowerCase();
+    if (inappropriateKeywords.some(keyword => cleanedQuestion.includes(keyword))) {
+        inappropriateWordCount++;
+        if (inappropriateWordCount >= 3) {
+            simulateBotTyping(50, getRandomResponse());
+            userInput.value = "";
+            return;
+        }
+    }
+
+    // Check JSON questions
+    const [numberOfLetters, found] = await checkJsonQuestions(userQuestion, ["questions", "faqs"]);
+    if (found) {
+        userInput.value = "";
+        return;
+    }
+
+    // Find the best answer
+    const [bestAnswerCount, foundBestAnswer] = await findBestAnswer(userQuestion, ["keywords", "terms"]);
+    if (foundBestAnswer) {
+        userInput.value = "";
+        return;
+    }
+
+    // Default response
+    simulateBotTyping(50, getRandomResponse());
+    userInput.value = "";
+}
+
+sendBtn.addEventListener("click", handleUserInput);
+userInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+        handleUserInput(event);
+    }
+});
 
 popoverButton.addEventListener("click", () => {
     popoverContent.classList.toggle("show");
