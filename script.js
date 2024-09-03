@@ -269,12 +269,18 @@ async function findBestAnswer(question, jsonFiles) {
 
 // Helper function to clean strings
 function cleanStrings(inputString) {
-    return inputString.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+    if (typeof inputString === 'string') {
+        return inputString.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+    }
+    return "";
 }
 
 // Helper function to clean strings but keep spaces
 function cleanStringsKeepSpaces(inputString) {
-    return inputString.replace(/[^a-zA-Z0-9\s]/g, "").toLowerCase();
+    if (typeof inputString === 'string') {
+        return inputString.replace(/[^a-zA-Z0-9\s]/g, "").toLowerCase();
+    }
+    return "";
 }
 
 // Function to check questions
@@ -315,7 +321,10 @@ async function checkJsonQuestions(question, jsonFiles) {
 
 // Helper function to count letters in a string
 function countLetters(inputString) {
-    return inputString.replace(/[^a-zA-Z]/g, "").length;
+    if (typeof inputString === 'string') {
+        return inputString.replace(/[^a-zA-Z]/g, "").length;
+    }
+    return 0;
 }
 
 popoverButton.addEventListener("click", () => {
