@@ -1,352 +1,127 @@
 [
-	{
-		"question": "How can I recover health?",
-                "keywords": "recover health",
-		"answer": "In order to recover health, you should use a Saline Bag."
-	},
-	{
-		"question": "How can I recover blood?",
-                "keywords": "recover blood",
-		"answer": "In order to recover blood, you can either use a Bloodbag or eat meat."
-	},
-	{
-		"question": "What is the minimum RAM for DayZ?", "pc specifications", "computer specs", "PC hardware specs",
-                "keywords": "hardware", "minimum", "specs", "specifications", "pc", "PC", "computer",
-		"answer": "Minimum: OS: Windows 7/8.1 64-bit. Processor: Intel Core i5-4430. Memory: 8 GB RAM."
-	},
-	{
-		"question": "What is the end goal of DayZ?",
-                "keywords": "goal",
-		"answer": "Gameplay. The goal of DayZ is to stay alive and healthy during the conditions of the zombie outbreak that have befallen the in-game world."
-	},
-	{
-		"question": "What is the first thing to do in DayZ?",
-                "keywords": "first thing",
-		"answer": "There are a lot of locations to explore in DayZ, and plenty of loot to pick up. When you're just starting out your first instinct will be to sprint right toward a city or a military base for the good stuff. Unfortunately, unless the servers are fairly empty, this will get you shot pretty quickly. Best approach is to find a melee weapon to defend yourself with, scout out areas of interest such as police stations or military bases and be very careful of your surroundings."
-	},
-	{
-		"question": "How long does it take to starve to death in DayZ?",
-                "keywords": "starve",
-		"answer": "You will starve to death within one day."
-	},
-	{
-		"question": "Is it safe to drink water?",
-                "keywords": "water",
-		"answer": "Water can be found in ponds, lakes, dams and extracted from water pumps to refill waterbottles or canteens. Water should be boiled before consumption to prevent infection."
-	},
-	{
-		"question": "Can you freeze to death?",
-                "keywords": "freeze",
-		"answer": "Once suffering from Hypothermia you will continuously lose Health aswell as you will lose energy faster. This can lead to starvation or death if not treated in time."
-	},
-	{
-		"question": "What are the survival basics?",
-                "keywords": "survival",
-		"answer": "The survival basics are: Health management, Inventory management, Navigation and exploration, Crafting and gathering, Zombie and threat management, Fire starting and cooking, Shelter building, Interaction with other survivors, Medical procedures, Environmentel hazards, communication and Stealth and avoidance."
-	},
-	{
-		"question": "Health management",
-                "keywords" : "health",
-		"answer": "Monitor your health, hunger, thirst, and overall condition regularly, to eat and drink to maintain your energy and hydration levels and to use bandages, rags, and medical supplies to treat injuries and illnesses."
-	},
-	{
-		"question": "Inventory management",
-		"answer": "Organize your inventory efficiently to carry essential items and maximize storage space. Prioritize items like food, water, medical supplies, and defensive equipment."
-	},
-	{
-		"question": "Navigation and exploration",
-		"answer": "Use landmarks, signs, and the in-game map to navigate the world. Learn to read road signs, town names, and topographical features for effective navigation."
-	},
-	{
-		"question": "Crafting and gathering",
-		"answer": "Gather materials from the environment, such as sticks, rags, and stones. Craft basic tools like improvised weapons, clothing, and backpacks."
-	},
-	{
-		"question": "Zombie and threat management",
-		"answer": "Approach zombies carefully or avoid them altogether to minimize the risk of combat. Use melee weapons or firearms to defend against zombies and other hostile players."
-	},
-	{
-		"question": "Fire starting and cooking",
-		"answer": "Learn to start fires using matches, lighters, or other ignition sources. Cook raw food to prevent illness and increase its nutritional value."
-	},
-	{
-		"question": "Shelter building",
-		"answer": "Set up temporary shelters to rest and store supplies. Use tents or improvised shelters to protect yourself from the elements."
-	},
-	{
-		"question": "Interaction with other survivors",
-		"answer": "Approach other survivors cautiously and assess the situation before engaging in conversation or cooperation. Be prepared for both friendly interactions and potential threats from other survivors."
-	},
-	{
-		"question": "Medical procedures",
-		"answer": "Learn how to disinfect wounds, apply bandages, and use medical supplies to heal injuries. Use splints to treat fractures and prevent further damage."
-	},
-	{
-		"question": "Environmental hazards",
-		"answer": "Be aware of temperature changes and protect yourself from hypothermia or heatstroke. Use protective clothing and equipment to defend against environmental hazards."
-	},
-	{
-		"question": "Communication",
-		"answer": "Use in-game voice or text chat to communicate with other survivors. Coordinate with friends or allies to enhance your survival chances."
-	},
-	{
-		"question": "Stealth and avoidance",
-		"answer": "Use cover and concealment to avoid detection by zombies and other survivors. Remember, no stranger is your friend unless proven otherwise. Crouch or go prone to reduce your visibility and noise level."
-	},
-	{
-		"question": "How do you find loot in DayZ?",
-		"answer": "Scavenging supplies in DayZ are all about finding the gear and weapons you need to ensure your survival. There are tons of options to fit yourself out with so that you can prepare for any situation you come across, but that also means there are many kinds of guns for players to learn and know about."
-	},
-	{
-		"question": "How do I find weapons?",
-		"answer": "There are various ways of obtaining weapons. Both firearms and melee weapons can be obtained from all around the world, from a random house, a barn or a warehouse to police stations, military bases and even heli crashes. Or, alternatively, from other Survivors."
-	},
-	{
-		"question": "What is DayZ?",
-		"answer": "DayZ is a multiplayer-only survival video game developed and published by Bohemia Interactive. It is the standalone game based on the mod of the same name for ARMA 2. Following a five-year-long early access period for Windows, the game was officially released in December 2018, and was released for the Xbox One and PlayStation 4 in 2019. The game places the player in the fictional post-Soviet Republic of Chernarus, the original setting of ARMA 2, where a mysterious plague has turned most of the population into violent infected. As a survivor, the player must scavenge the world for food, water, weapons and medicine, while killing or avoiding the infected, and killing, avoiding, or cooperating with other players in an effort to survive the outbreak. DayZ began development in 2012 when the mod's creator, Dean Hall, joined Bohemia Interactive to commence work on the standalone version of the game. The development has been focused on altering the engine to suit the game's needs, developing a working client-server architecture, and introducing new features like diseases and a better inventory system. The game sold over three million copies during its early access phase."
-	},
-	{
-		"question": "What is DayZ Standalone?",
-		"answer": "DayZ is a multiplayer-only survival video game developed and published by Bohemia Interactive. It is the standalone game based on the mod of the same name for ARMA 2. Following a five-year-long early access period for Windows, the game was officially released in December 2018, and was released for the Xbox One and PlayStation 4 in 2019. The game places the player in the fictional post-Soviet Republic of Chernarus, the original setting of ARMA 2, where a mysterious plague has turned most of the population into violent infected. As a survivor, the player must scavenge the world for food, water, weapons and medicine, while killing or avoiding the infected, and killing, avoiding, or cooperating with other players in an effort to survive the outbreak. DayZ began development in 2012 when the mod's creator, Dean Hall, joined Bohemia Interactive to commence work on the standalone version of the game. The development has been focused on altering the engine to suit the game's needs, developing a working client-server architecture, and introducing new features like diseases and a better inventory system. The game sold over three million copies during its early access phase."
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	},
-	{
-		"question": "",
-		"answer": ""
-	}
+    {
+        "question": "How can I recover health?",
+        "keywords": ["recover", "health"],
+        "answer": "In order to recover health, you should use a Saline Bag."
+    },
+    {
+        "question": "How can I recover blood?",
+        "keywords": ["recover", "blood"],
+        "answer": "In order to recover blood, you can either use a Bloodbag or eat meat."
+    },
+    {
+        "question": "What is the minimum RAM for DayZ?",
+        "keywords": ["minimum", "RAM", "DayZ", "hardware", "specifications", "pc", "computer"],
+        "answer": "Minimum: OS: Windows 7/8.1 64-bit. Processor: Intel Core i5-4430. Memory: 8 GB RAM."
+    },
+    {
+        "question": "What is the end goal of DayZ?",
+        "keywords": ["goal", "DayZ"],
+        "answer": "The goal of DayZ is to stay alive and healthy during the conditions of the zombie outbreak that have befallen the in-game world."
+    },
+    {
+        "question": "What is the first thing to do in DayZ?",
+        "keywords": ["first", "DayZ"],
+        "answer": "When you're just starting out, your first instinct will be to sprint toward a city or military base for the good stuff. However, it's best to find a melee weapon to defend yourself, scout out areas of interest, and be careful of your surroundings."
+    },
+    {
+        "question": "How long does it take to starve to death in DayZ?",
+        "keywords": ["starve", "death", "DayZ"],
+        "answer": "You will starve to death within one day."
+    },
+    {
+        "question": "Is it safe to drink water?",
+        "keywords": ["water", "drink", "safe"],
+        "answer": "Water should be boiled before consumption to prevent infection, even if it’s collected from ponds, lakes, or pumps."
+    },
+    {
+        "question": "Can you freeze to death?",
+        "keywords": ["freeze", "death"],
+        "answer": "Once suffering from hypothermia, you will continuously lose health, and it can lead to starvation or death if not treated in time."
+    },
+    {
+        "question": "What are the survival basics?",
+        "keywords": ["survival", "basics"],
+        "answer": "The survival basics include health management, inventory management, navigation, crafting, threat management, fire starting, shelter building, interaction with survivors, medical procedures, environmental hazards, communication, and stealth."
+    },
+    {
+        "question": "How do you manage health?",
+        "keywords": ["health", "management"],
+        "answer": "Monitor your health, hunger, thirst, and overall condition regularly. Eat and drink to maintain energy and hydration, and use medical supplies to treat injuries and illnesses."
+    },
+    {
+        "question": "How do you manage inventory?",
+        "keywords": ["inventory", "management"],
+        "answer": "Organize your inventory efficiently to carry essential items and maximize storage space. Prioritize items like food, water, medical supplies, and defensive equipment."
+    },
+    {
+        "question": "How do you navigate and explore?",
+        "keywords": ["navigation", "exploration"],
+        "answer": "Use landmarks, signs, and the in-game map to navigate. Learn to read road signs, town names, and topographical features for effective navigation."
+    },
+    {
+        "question": "How do you craft and gather?",
+        "keywords": ["crafting", "gathering"],
+        "answer": "Gather materials from the environment, such as sticks, rags, and stones. Craft basic tools like improvised weapons, clothing, and backpacks."
+    },
+    {
+        "question": "How do you manage zombies and threats?",
+        "keywords": ["zombies", "threat", "management"],
+        "answer": "Approach zombies carefully or avoid them to minimize combat risk. Use melee weapons or firearms to defend against zombies and other hostile players."
+    },
+    {
+        "question": "How do you start fires and cook?",
+        "keywords": ["fire", "starting", "cooking"],
+        "answer": "Start fires using matches, lighters, or other ignition sources. Cook raw food to prevent illness and increase its nutritional value."
+    },
+    {
+        "question": "How do you build shelters?",
+        "keywords": ["shelter", "building"],
+        "answer": "Set up temporary shelters to rest and store supplies. Use tents or improvised shelters to protect yourself from the elements."
+    },
+    {
+        "question": "How do you interact with other survivors?",
+        "keywords": ["interaction", "survivors"],
+        "answer": "Approach other survivors cautiously. Assess situations before engaging and be prepared for both friendly interactions and potential threats."
+    },
+    {
+        "question": "How do you perform medical procedures?",
+        "keywords": ["medical", "procedures"],
+        "answer": "Disinfect wounds, apply bandages, and use medical supplies to heal injuries. Use splints to treat fractures and prevent further damage."
+    },
+    {
+        "question": "What are the environmental hazards?",
+        "keywords": ["environmental", "hazards"],
+        "answer": "Be aware of temperature changes to avoid hypothermia or heatstroke. Use protective clothing and equipment to defend against environmental hazards."
+    },
+    {
+        "question": "How do you communicate?",
+        "keywords": ["communication", "chat"],
+        "answer": "Use in-game voice or text chat to communicate with other survivors. Coordinate with allies to enhance survival chances."
+    },
+    {
+        "question": "How do you use stealth and avoidance?",
+        "keywords": ["stealth", "avoidance"],
+        "answer": "Use cover and concealment to avoid detection by zombies and survivors. Crouch or go prone to reduce visibility and noise."
+    },
+    {
+        "question": "How do you find loot in DayZ?",
+        "keywords": ["loot", "DayZ"],
+        "answer": "Scavenge the world to find gear and weapons for survival. Options range from houses and barns to police stations and military bases."
+    },
+    {
+        "question": "How do you find weapons?",
+        "keywords": ["weapons", "finding"],
+        "answer": "Weapons can be found in various places like houses, barns, police stations, and military bases. Alternatively, acquire them from other survivors."
+    },
+    {
+        "question": "What is DayZ?",
+        "keywords": ["DayZ", "game"],
+        "answer": "DayZ is a multiplayer-only survival video game developed by Bohemia Interactive. The game is set in the post-Soviet Republic of Chernarus, where a mysterious plague has turned most of the population into violent infected."
+    },
+    {
+        "question": "What is DayZ Standalone?",
+        "keywords": ["DayZ", "Standalone"],
+        "answer": "DayZ Standalone is the standalone version of the DayZ mod for ARMA 2, developed and published by Bohemia Interactive. It was released after a five-year early access period."
+    }
 ]
