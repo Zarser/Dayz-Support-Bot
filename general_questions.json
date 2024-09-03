@@ -10,8 +10,8 @@
 		"answer": "In order to recover blood, you can either use a Bloodbag or eat meat."
 	},
 	{
-		"question": ["What is the minimum RAM for DayZ?", "pc specifications", "computer specs", "PC hardware specs"],
-                "keywords": ["hardware", "minimum", "specs", "specifications", "pc", "PC", "computer"],
+		"question": "What is the minimum RAM for DayZ?", "pc specifications", "computer specs", "PC hardware specs",
+                "keywords": "hardware", "minimum", "specs", "specifications", "pc", "PC", "computer",
 		"answer": "Minimum: OS: Windows 7/8.1 64-bit. Processor: Intel Core i5-4430. Memory: 8 GB RAM."
 	},
 	{
