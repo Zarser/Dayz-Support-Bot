@@ -95,7 +95,7 @@ async function handleUserInput() {
         }
 
         // Delete the inappropriate message and display a placeholder message
-        displayUserMessage("Message deleted", "color: red; font-weight: bold;" );
+        displayUserMessage("Message deleted", "color: red; font-weight: bold;");
         userInput.value = ""; // Clear the input field
         isBotTyping = true;
         const inappropriateResponses = [
@@ -111,8 +111,9 @@ async function handleUserInput() {
         isBotTyping = false;
         return;
     }
+
     // Handle greetings
-	const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');	
+    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
@@ -127,51 +128,48 @@ async function handleUserInput() {
 
     isBotTyping = true;
 
-
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-	// Look for answers based on question
+    // Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
         let numberOfLetters = 0;
-		question = cleanStringsKeepSpaces(question).toLowerCase();
+        question = cleanStringsKeepSpaces(question).toLowerCase();
         try {
-			// First check questions
-			let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
-            //
-
-            // let checkQuestionsWordsOccurences = false;
+            // First check questions
+            let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
             let checkKeywords = false;
-			if (checkQuestions.boolValue) {
-				numberOfLetters = checkQuestions.intValue;
-			} else { // If no question found in jsons, continue to keywords pairs and hope for the best
-				checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
-				if (checkKeywords.boolValue) {
-					numberOfLetters = checkKeywords.intValue;
-				}
-			}
-			// If all fails, give user some random input.
-            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {//&& !checkQuestionsWordsOccurences.boolValue ) {
+            if (checkQuestions.boolValue) {
+                numberOfLetters = checkQuestions.intValue;
+            } else { // If no question found in jsons, continue to keywords pairs and hope for the best
+                checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
+                if (checkKeywords.boolValue) {
+                    numberOfLetters = checkKeywords.intValue;
+                }
+            }
+            // If all fails, give user some random input.
+            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
                 const randomResponse = getRandomResponse();
-				numberOfLetters = countLetters(randomResponse);
-				await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
+                numberOfLetters = countLetters(randomResponse);
+                await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
                 await simulateBotTyping(50, randomResponse);
-				await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
         } catch (error) {
             console.error("An error occurred:", error);
         }
-		await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters != 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (numberOfLetters !== 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
     }
 }
-sendBtn.addEventListener("click", handleUserInput);				
-userInput.addEventListener("keydown", function(event) {			
+
+sendBtn.addEventListener("click", handleUserInput);
+userInput.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
         event.preventDefault(); 
         handleUserInput(); 
