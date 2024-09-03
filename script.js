@@ -228,7 +228,6 @@ async function simulateBotTyping(delayForWords, botResponse) {
 
 
 
-// Helper function to match the question directly to avoid multiple operations
 async function checkJsonQuestions(question, jsonCategories) {
     try {
         for (const category of jsonCategories) {
@@ -237,6 +236,7 @@ async function checkJsonQuestions(question, jsonCategories) {
                 throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
             }
             const jsonText = await response.text();
+            console.log("JSON Text:", jsonText); // Log raw JSON for debugging
             try {
                 const jsonArray = JSON.parse(jsonText);
                 for (const jsonField of jsonArray) {
@@ -271,20 +271,21 @@ async function findBestAnswer(question, keywordsCategories) {
                 throw new Error(`Failed to fetch ./${keyword}.json: ${response.status}`);
             }
             const jsonText = await response.text();
+            console.log("JSON Text:", jsonText); // Log raw JSON for debugging
             try {
                 const jsonArray = JSON.parse(jsonText);
                 for (const jsonField of jsonArray) {
                     const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
                     let match = false; // Assume no match
-                    for (const keywordInCombinations of keywordCombinations) {				// first go through the combinations
+                    for (const keywordInCombinations of keywordCombinations) { // first go through the combinations
                         const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
                         if (regex.test(question)) {
                             match = true;
                             break;
                         }
                     }
-                    if (!match) {															// if no matches happen, go through single keywords and match
-                        for (const keywordInCombinations of keywordCombinations) {			
+                    if (!match) { // if no matches happen, go through single keywords and match
+                        for (const keywordInCombinations of keywordCombinations) {            
                             let keywordArray = keywordInCombinations.split(" ");
                             for (const keyword of keywordArray) {
                                 const regex = new RegExp(`\\b${keyword}\\b`);
@@ -295,12 +296,12 @@ async function findBestAnswer(question, keywordsCategories) {
                             }
                         }
                     }
-                    if (match) {															// if match, create a match score
+                    if (match) { // if match, create a match score
                         const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
                         if (matchScore > bestMatchScore) {
                             bestMatchScore = matchScore;
                             bestAnswer = jsonField["answer"];
-                            console.log("Best answer:" + bestAnswer);
+                            console.log("Best answer:", bestAnswer);
                         }
                     }
                 }
@@ -309,7 +310,7 @@ async function findBestAnswer(question, keywordsCategories) {
                 console.error("Problematic JSON text:", jsonText);
             }
         }
-        if (bestAnswer) {																// if best answer is found, return it.
+        if (bestAnswer) { // if best answer is found, return it.
             simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
             const result = [numberOfLetters, true];
