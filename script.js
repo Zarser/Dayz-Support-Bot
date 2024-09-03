@@ -117,12 +117,9 @@ async function handleUserInput() {
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
-        simulateBotTyping(50, randomGreeting).then(() => {
-            return new Promise(resolve => setTimeout(resolve, 1000));
-        }).then(() => {
-            isBotTyping = false;
-            userInput.value = ""; // Clear the input field
-        });
+        await simulateBotTyping(50, randomGreeting);
+        userInput.value = ""; // Clear the input field
+        isBotTyping = false;
         return;
     }
 
@@ -271,16 +268,20 @@ async function findBestAnswer(question, jsonFiles) {
 function cleanStrings(inputString) {
     if (typeof inputString === 'string') {
         return inputString.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+    } else {
+        console.error("Expected a string but got:", typeof inputString, inputString);
+        return "";
     }
-    return "";
 }
 
 // Helper function to clean strings but keep spaces
 function cleanStringsKeepSpaces(inputString) {
     if (typeof inputString === 'string') {
         return inputString.replace(/[^a-zA-Z0-9\s]/g, "").toLowerCase();
+    } else {
+        console.error("Expected a string but got:", typeof inputString, inputString);
+        return "";
     }
-    return "";
 }
 
 // Function to check questions
@@ -323,8 +324,10 @@ async function checkJsonQuestions(question, jsonFiles) {
 function countLetters(inputString) {
     if (typeof inputString === 'string') {
         return inputString.replace(/[^a-zA-Z]/g, "").length;
+    } else {
+        console.error("Expected a string but got:", typeof inputString, inputString);
+        return 0;
     }
-    return 0;
 }
 
 popoverButton.addEventListener("click", () => {
