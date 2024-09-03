@@ -212,23 +212,15 @@ async function simulateBotTyping(delayForWords, botResponse) {
 
     typingInterval = setInterval(() => {
         if (currentCharIndex <= botResponse.length) {
-            typingElement.innerHTML = `<span class="typing-color">${botResponse.substring(0, currentCharIndex)}</span>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
+            typingElement.innerHTML = `<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span> ${botResponse.substring(0, currentCharIndex)}`;
             currentCharIndex++;
         } else {
             displayResponse();
         }
     }, delayForWords);
-
-    // Display the response after typing delay
-    await new Promise(resolve => setTimeout(() => {
-        clearInterval(typingInterval);
-        displayResponse();
-        resolve();
-    }, delayForWords * botResponse.length + 500));
 }
 
-// Keyword extraction and answer search function
+// Find best answer based on keywords
 async function findBestAnswer(question, jsonFiles) {
     const cleanedQuestion = cleanStrings(question);
     let bestAnswer = "";
@@ -249,18 +241,23 @@ async function findBestAnswer(question, jsonFiles) {
 
     // Process JSON data
     for (const category of jsonData) {
-        // Check if category.keywords is an array
+        // Check if category.keywords is an array or a string
+        let keywords = [];
         if (Array.isArray(category.keywords)) {
-            for (const keyword of category.keywords) {
-                const cleanedKeyword = cleanStrings(keyword);
-
-                if (cleanedQuestion.includes(cleanedKeyword) && cleanedKeyword.length > bestAnswerValue) {
-                    bestAnswer = category.answer;
-                    bestAnswerValue = cleanedKeyword.length;
-                }
-            }
+            keywords = category.keywords;
+        } else if (typeof category.keywords === 'string') {
+            keywords = category.keywords.split(',').map(keyword => keyword.trim());
         } else {
-            console.error("Expected 'keywords' to be an array but got:", typeof category.keywords, category.keywords);
+            console.error("Expected 'keywords' to be an array or a string but got:", typeof category.keywords, category.keywords);
+            continue;
+        }
+
+        for (const keyword of keywords) {
+            const cleanedKeyword = cleanStrings(keyword);
+            if (cleanedQuestion.includes(cleanedKeyword) && cleanedKeyword.length > bestAnswerValue) {
+                bestAnswer = category.answer;
+                bestAnswerValue = cleanedKeyword.length;
+            }
         }
     }
 
