@@ -111,15 +111,17 @@ async function handleUserInput() {
         isBotTyping = false;
         return;
     }
-
     // Handle greetings
     const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
-        await simulateBotTyping(50, randomGreeting);
-        userInput.value = ""; // Clear the input field
-        isBotTyping = false;
+        simulateBotTyping(50, randomGreeting).then(() => {
+            return new Promise(resolve => setTimeout(resolve, 1000));
+        }).then(() => {
+            isBotTyping = false;
+            userInput.value = ""; // Clear the input field
+        });
         return;
     }
 
@@ -158,7 +160,7 @@ async function handleUserInput() {
             console.error("An error occurred:", error);
         }
         await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters !== 0) {
+        if (numberOfLetters != 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
@@ -168,8 +170,8 @@ async function handleUserInput() {
 sendBtn.addEventListener("click", handleUserInput);
 userInput.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
-        event.preventDefault(); 
-        handleUserInput(); 
+        event.preventDefault();
+        handleUserInput();
         console.log("Send button clicked");
     }
 });
@@ -247,13 +249,18 @@ async function findBestAnswer(question, jsonFiles) {
 
     // Process JSON data
     for (const category of jsonData) {
-        for (const keyword of category.keywords) {
-            const cleanedKeyword = cleanStrings(keyword);
+        // Check if category.keywords is an array
+        if (Array.isArray(category.keywords)) {
+            for (const keyword of category.keywords) {
+                const cleanedKeyword = cleanStrings(keyword);
 
-            if (cleanedQuestion.includes(cleanedKeyword) && cleanedKeyword.length > bestAnswerValue) {
-                bestAnswer = category.answer;
-                bestAnswerValue = cleanedKeyword.length;
+                if (cleanedQuestion.includes(cleanedKeyword) && cleanedKeyword.length > bestAnswerValue) {
+                    bestAnswer = category.answer;
+                    bestAnswerValue = cleanedKeyword.length;
+                }
             }
+        } else {
+            console.error("Expected 'keywords' to be an array but got:", typeof category.keywords, category.keywords);
         }
     }
 
@@ -264,30 +271,29 @@ async function findBestAnswer(question, jsonFiles) {
     return { boolValue: false, intValue: 0 };
 }
 
-// Helper function to clean strings
-function cleanStrings(inputString) {
-    if (typeof inputString === 'string') {
-        return inputString.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+// Function to clean strings
+function cleanStrings(input) {
+    if (typeof input === 'string') {
+        return input.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
     } else {
-        console.error("Expected a string but got:", typeof inputString, inputString);
+        console.error("Expected a string but got:", typeof input, input);
         return "";
     }
 }
 
-// Helper function to clean strings but keep spaces
-function cleanStringsKeepSpaces(inputString) {
-    if (typeof inputString === 'string') {
-        return inputString.replace(/[^a-zA-Z0-9\s]/g, "").toLowerCase();
+// Function to clean strings but keep spaces
+function cleanStringsKeepSpaces(input) {
+    if (typeof input === 'string') {
+        return input.replace(/[^a-zA-Z0-9\s]/g, "").toLowerCase();
     } else {
-        console.error("Expected a string but got:", typeof inputString, inputString);
+        console.error("Expected a string but got:", typeof input, input);
         return "";
     }
 }
 
-// Function to check questions
+// Check JSON for questions
 async function checkJsonQuestions(question, jsonFiles) {
-    let bestAnswer = "";
-    let bestAnswerValue = -1;
+    const cleanedQuestion = cleanStrings(question);
     let jsonData = [];
 
     // Load JSON data from each file in the array
@@ -304,43 +310,35 @@ async function checkJsonQuestions(question, jsonFiles) {
 
     // Process JSON data
     for (const category of jsonData) {
-        const cleanedQuestionInJson = cleanStrings(category.question);
-        const cleanedQuestion = cleanStrings(question);
-
-        if (cleanedQuestionInJson === cleanedQuestion && cleanedQuestion.length > bestAnswerValue) {
-            bestAnswer = category.answer;
-            bestAnswerValue = cleanedQuestion.length;
+        if (Array.isArray(category.questions)) {
+            for (const q of category.questions) {
+                const cleanedQ = cleanStrings(q);
+                if (cleanedQuestion.includes(cleanedQ)) {
+                    return { boolValue: true, intValue: cleanedQ.length };
+                }
+            }
+        } else {
+            console.error("Expected 'questions' to be an array but got:", typeof category.questions, category.questions);
         }
     }
 
-    if (bestAnswer) {
-        await simulateBotTyping(50, bestAnswer);
-        return { boolValue: true, intValue: bestAnswerValue };
-    }
     return { boolValue: false, intValue: 0 };
 }
 
-// Helper function to count letters in a string
-function countLetters(inputString) {
-    if (typeof inputString === 'string') {
-        return inputString.replace(/[^a-zA-Z]/g, "").length;
-    } else {
-        console.error("Expected a string but got:", typeof inputString, inputString);
-        return 0;
-    }
+// Count letters in a string
+function countLetters(str) {
+    return str.replace(/[^a-zA-Z]/g, "").length;
 }
 
-popoverButton.addEventListener("click", () => {
-    popoverContent.style.display = popoverContent.style.display === "block" ? "none" : "block";
-});
+// Add popover functionality
+function togglePopover() {
+    const isVisible = popoverContent.style.display === "block";
+    popoverContent.style.display = isVisible ? "none" : "block";
+}
 
-document.addEventListener("click", (event) => {
-    const isClickInsidePopover = popoverButton.contains(event.target) || popoverContent.contains(event.target);
-    if (!isClickInsidePopover) {
-        popoverContent.style.display = "none";
-    }
-});
+popoverButton.addEventListener("click", togglePopover);
 
+// Report button functionality
 reportButton.addEventListener("click", () => {
-    window.location.href = "https://example.com/report";
+    alert("Please submit your report. Thank you!");
 });
