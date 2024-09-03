@@ -1,4 +1,3 @@
-// Ensure that pre_screen.html is shown first
 function checkTerms() {
     try {
         if (!localStorage.getItem("agreedToTerms")) {
@@ -6,21 +5,9 @@ function checkTerms() {
         }
     } catch (error) {
         console.error("Error accessing local storage:", error);
+        // Handle the error (e.g., fallback behavior, show error message)
     }
 }
-
-// Function to save the agreement to terms
-function agreeToTerms() {
-    try {
-        localStorage.setItem("agreedToTerms", "true");
-        window.location.replace("index.html"); // Redirect to index.html after agreeing to terms
-    } catch (error) {
-        console.error("Error accessing local storage:", error);
-    }
-}
-
-// Call the checkTerms function on page load to ensure pre_screen.html is displayed first
-checkTerms();
 
 const chatBox = document.getElementById("chatBox");
 const userInput = document.getElementById("userInput");
@@ -95,7 +82,7 @@ async function handleUserInput() {
         }
 
         // Delete the inappropriate message and display a placeholder message
-        displayUserMessage("Message deleted", "color: red; font-weight: bold;");
+        displayUserMessage("Message deleted", "color: red; font-weight: bold;" );
         userInput.value = ""; // Clear the input field
         isBotTyping = true;
         const inappropriateResponses = [
@@ -112,7 +99,7 @@ async function handleUserInput() {
         return;
     }
     // Handle greetings
-    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
+	const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');	
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
@@ -127,51 +114,54 @@ async function handleUserInput() {
 
     isBotTyping = true;
 
+
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-    // Look for answers based on question
+	// Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
         let numberOfLetters = 0;
-        question = cleanStringsKeepSpaces(question).toLowerCase();
+		question = cleanStringsKeepSpaces(question).toLowerCase();
         try {
-            // First check questions
-            let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
+			// First check questions
+			let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
+            //
+
+            // let checkQuestionsWordsOccurences = false;
             let checkKeywords = false;
-            if (checkQuestions.boolValue) {
-                numberOfLetters = checkQuestions.intValue;
-            } else { // If no question found in jsons, continue to keywords pairs and hope for the best
-                checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
-                if (checkKeywords.boolValue) {
-                    numberOfLetters = checkKeywords.intValue;
-                }
-            }
-            // If all fails, give user some random input.
-            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
+			if (checkQuestions.boolValue) {
+				numberOfLetters = checkQuestions.intValue;
+			} else { // If no question found in jsons, continue to keywords pairs and hope for the best
+				checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
+				if (checkKeywords.boolValue) {
+					numberOfLetters = checkKeywords.intValue;
+				}
+			}
+			// If all fails, give user some random input.
+            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {//&& !checkQuestionsWordsOccurences.boolValue ) {
                 const randomResponse = getRandomResponse();
-                numberOfLetters = countLetters(randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
+				numberOfLetters = countLetters(randomResponse);
+				await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
                 await simulateBotTyping(50, randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 1000));
+				await new Promise(resolve => setTimeout(resolve, 1000));
             }
         } catch (error) {
             console.error("An error occurred:", error);
         }
-        await new Promise(resolve => setTimeout(resolve, 1000));
+		await new Promise(resolve => setTimeout(resolve, 1000));
         if (numberOfLetters != 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
     }
 }
-
-sendBtn.addEventListener("click", handleUserInput);
-userInput.addEventListener("keydown", function(event) {
+sendBtn.addEventListener("click", handleUserInput);				
+userInput.addEventListener("keydown", function(event) {			
     if (event.key === "Enter") {
-        event.preventDefault();
-        handleUserInput();
+        event.preventDefault(); 
+        handleUserInput(); 
         console.log("Send button clicked");
     }
 });
@@ -212,130 +202,173 @@ async function simulateBotTyping(delayForWords, botResponse) {
 
     typingInterval = setInterval(() => {
         if (currentCharIndex <= botResponse.length) {
-            typingElement.innerHTML = `<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span> ${botResponse.substring(0, currentCharIndex)}`;
+            typingElement.innerHTML = `<span class="typing-color">${botResponse.substring(0, currentCharIndex)}</span>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
             currentCharIndex++;
         } else {
             displayResponse();
         }
     }, delayForWords);
+
+    // Create and append skip button to the document body
+    const skipButton = document.getElementById("skipButton");
+    skipButton.textContent = "Skip";
+    skipButton.classList.add("skip-button");
+    document.body.appendChild(skipButton);
+
+    // Event listener to remove typing effect and display full message when skip button is clicked
+    skipButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        clearInterval(typingInterval);
+        displayResponse();
+        console.log("Skip button clicked");
+    });
 }
 
-// Find best answer based on keywords
-async function findBestAnswer(question, jsonFiles) {
-    const cleanedQuestion = cleanStrings(question);
-    let bestAnswer = "";
-    let bestAnswerValue = -1;
-    let jsonData = [];
 
-    // Load JSON data from each file in the array
-    for (const jsonFile of jsonFiles) {
-        try {
-            const response = await fetch(jsonFile + ".json");
-            const data = await response.json();
-            jsonData.push(...data);
-        } catch (error) {
-            console.error("Error loading or parsing JSON:", error);
-            continue;
-        }
-    }
 
-    // Process JSON data
-    for (const category of jsonData) {
-        // Check if category.keywords is an array or a string
-        let keywords = [];
-        if (Array.isArray(category.keywords)) {
-            keywords = category.keywords;
-        } else if (typeof category.keywords === 'string') {
-            keywords = category.keywords.split(',').map(keyword => keyword.trim());
-        } else {
-            console.error("Expected 'keywords' to be an array or a string but got:", typeof category.keywords, category.keywords);
-            continue;
-        }
 
-        for (const keyword of keywords) {
-            const cleanedKeyword = cleanStrings(keyword);
-            if (cleanedQuestion.includes(cleanedKeyword) && cleanedKeyword.length > bestAnswerValue) {
-                bestAnswer = category.answer;
-                bestAnswerValue = cleanedKeyword.length;
+// Helper function to match the question directly to avoid multiple operations
+async function checkJsonQuestions(question, jsonCategories) {
+    try {
+        for (const category of jsonCategories) {
+            const response = await fetch(`${category}.json`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
             }
-        }
-    }
-
-    if (bestAnswer) {
-        await simulateBotTyping(50, bestAnswer);
-        return { boolValue: true, intValue: bestAnswerValue };
-    }
-    return { boolValue: false, intValue: 0 };
-}
-
-// Function to clean strings
-function cleanStrings(input) {
-    if (typeof input === 'string') {
-        return input.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-    } else {
-        console.error("Expected a string but got:", typeof input, input);
-        return "";
-    }
-}
-
-// Function to clean strings but keep spaces
-function cleanStringsKeepSpaces(input) {
-    if (typeof input === 'string') {
-        return input.replace(/[^a-zA-Z0-9\s]/g, "").toLowerCase();
-    } else {
-        console.error("Expected a string but got:", typeof input, input);
-        return "";
-    }
-}
-
-// Check JSON for questions
-async function checkJsonQuestions(question, jsonFiles) {
-    const cleanedQuestion = cleanStrings(question);
-    let jsonData = [];
-
-    // Load JSON data from each file in the array
-    for (const jsonFile of jsonFiles) {
-        try {
-            const response = await fetch(jsonFile + ".json");
-            const data = await response.json();
-            jsonData.push(...data);
-        } catch (error) {
-            console.error("Error loading or parsing JSON:", error);
-            continue;
-        }
-    }
-
-    // Process JSON data
-    for (const category of jsonData) {
-        if (Array.isArray(category.questions)) {
-            for (const q of category.questions) {
-                const cleanedQ = cleanStrings(q);
-                if (cleanedQuestion.includes(cleanedQ)) {
-                    return { boolValue: true, intValue: cleanedQ.length };
+            const jsonArray = await response.json();
+            for (const jsonField of jsonArray) {
+                if (question === cleanStringsKeepSpaces(jsonField["question"]).toLowerCase()) {
+                    simulateBotTyping(50, jsonField["answer"]);
+                    let numberOfLetters = countLetters(jsonField["answer"]);
+                    const result = [numberOfLetters, true];
+                    result.intValue = result[0];
+                    result.boolValue = result[1];
+                    return result; // Match found => return true immediately
                 }
             }
-        } else {
-            console.error("Expected 'questions' to be an array but got:", typeof category.questions, category.questions);
         }
+    } catch (error) {
+        console.error("Error loading or parsing JSON:", error);
+        return false; // Return false in case of error
     }
-
-    return { boolValue: false, intValue: 0 };
+    return false; // No matches found in questions
 }
 
-// Count letters in a string
-function countLetters(str) {
-    return str.replace(/[^a-zA-Z]/g, "").length;
+async function findBestAnswer(question, keywordsCategories) {
+    try {
+        let bestAnswer = null;
+        let bestMatchScore = 0;
+        for (const keyword of keywordsCategories) {
+            const response = await fetch(`./${keyword}.json`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ./${keyword}.json: ${response.status}`);
+            }
+            const jsonArray = await response.json();
+            for (const jsonField of jsonArray) {
+                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
+                let match = false; // Assume no match
+                for (const keywordInCombinations of keywordCombinations) {				// first go through the combinations
+					const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
+					if (regex.test(question)) {
+						match = true;
+						break;
+					}
+				}
+				if (!match) {															// if no matches happen, go through single keywords and match
+					for (const keywordInCombinations of keywordCombinations) {			
+						let keywordArray = keywordInCombinations.split(" ");
+						for (const keyword of keywordArray) {
+							const regex = new RegExp(`\\b${keyword}\\b`);
+							if (regex.test(question)) {
+								match = true;
+								break;
+							}
+						}
+					}
+				}
+                if (match) {															// if match, create a match score
+                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
+                    if (matchScore > bestMatchScore) {
+                        bestMatchScore = matchScore;
+                        bestAnswer = jsonField["answer"];
+						console.log("Best answer:" + bestAnswer);
+                    }
+                }
+            }
+        }
+        if (bestAnswer) {																// if best answer is found, return it.
+            simulateBotTyping(50, bestAnswer);
+            let numberOfLetters = countLetters(bestAnswer);
+            const result = [numberOfLetters, true];
+            result.intValue = result[0];
+            result.boolValue = result[1];
+            return result;
+        } else {
+			const result = [0, false];
+		}
+    } catch (error) {
+        console.error("Error loading or parsing JSON:", error);
+    }
+    return [0, false];
 }
 
-// Add popover functionality
-function togglePopover() {
-    const isVisible = popoverContent.style.display === "block";
-    popoverContent.style.display = isVisible ? "none" : "block";
+function checkQuestionMatch(userQuestion, keywordCombinationsString) {
+    let occurrences = 0;
+	// Check combinations of keywords
+    keywordCombinationsString.split('+').forEach(keywordCombo => {
+		if (userQuestion === keywordCombo) {
+			return 100;
+		}
+        const comboKeywordsArray = keywordCombo.split('+');
+        comboKeywordsArray.forEach(keyword => {
+            if (userQuestion.includes(keyword)) {
+				occurrences++;
+            }
+        });
+    });
+    // Check single keywords
+    keywordCombinationsString.split('+').forEach(keyword => {
+        const cleanedKeywordArray = keyword.split(" ");
+		cleanedKeywordArray.forEach(cleanedKeyword => {
+			if (userQuestion === cleanedKeyword) {
+				return 100;
+			}
+			const regex = new RegExp(`\\b${cleanedKeyword}\\b`, 'i');			
+			if (regex.test(userQuestion)) {
+				occurrences++;
+			}
+		});
+    });
+	// return occurences for a ranking system
+    return occurrences;
 }
 
-popoverButton.addEventListener("click", togglePopover);
+// Helper function to count letters
+function countLetters(sentence) {
+	let numberOfLetters = 0;
+	for (const letter in sentence) {
+		numberOfLetters++;
+	}
+	return numberOfLetters;
+}
 
-// Report button functionality
-reportButton.addEventListener("click", () => {
-    alert("Please submit your report. Thank you!");
+// Helper function to clean out strings;
+function cleanStringsKeepSpaces(input) {
+    // Use a regular expression to replace any characters that are not letters or spaces
+    return input.replace(/[^a-zA-Z\s]/g, '');
+}
+
+popoverButton.addEventListener("click", () => {
+    popoverContent.classList.toggle("show");
 });
+
+reportButton.addEventListener("click", () => {
+    const bugReportWindow = window.open(
+        "report_form.html",
+        "Bug Report",
+        "width=700,height=500,left=" + (window.innerWidth / 2 - 200) + ",top=" + (window.innerHeight / 2 - 250)
+    );
+    bugReportWindow.focus();
+});
+
