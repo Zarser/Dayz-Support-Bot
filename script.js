@@ -1,3 +1,4 @@
+// Ensure that pre_screen.html is shown first
 function checkTerms() {
     try {
         if (!localStorage.getItem("agreedToTerms")) {
@@ -5,9 +6,21 @@ function checkTerms() {
         }
     } catch (error) {
         console.error("Error accessing local storage:", error);
-        // Handle the error (e.g., fallback behavior, show error message)
     }
 }
+
+// Function to save the agreement to terms
+function agreeToTerms() {
+    try {
+        localStorage.setItem("agreedToTerms", "true");
+        window.location.replace("index.html"); // Redirect to index.html after agreeing to terms
+    } catch (error) {
+        console.error("Error accessing local storage:", error);
+    }
+}
+
+// Call the checkTerms function on page load to ensure pre_screen.html is displayed first
+checkTerms();
 
 const chatBox = document.getElementById("chatBox");
 const userInput = document.getElementById("userInput");
@@ -82,7 +95,7 @@ async function handleUserInput() {
         }
 
         // Delete the inappropriate message and display a placeholder message
-        displayUserMessage("Message deleted", "color: red; font-weight: bold;");
+        displayUserMessage("Message deleted", "color: red; font-weight: bold;" );
         userInput.value = ""; // Clear the input field
         isBotTyping = true;
         const inappropriateResponses = [
@@ -99,7 +112,7 @@ async function handleUserInput() {
         return;
     }
     // Handle greetings
-    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
+	const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');	
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
@@ -114,51 +127,54 @@ async function handleUserInput() {
 
     isBotTyping = true;
 
+
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
     const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
-    // Look for answers based on question
+	// Look for answers based on question
     if (question !== "") {
         displayUserMessage(question);
         userInput.value = "";
         let numberOfLetters = 0;
-        question = cleanStringsKeepSpaces(question).toLowerCase();
+		question = cleanStringsKeepSpaces(question).toLowerCase();
         try {
-            // First check questions
-            let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
+			// First check questions
+			let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
+            //
 
+            // let checkQuestionsWordsOccurences = false;
             let checkKeywords = false;
-            if (checkQuestions.boolValue) {
-                numberOfLetters = checkQuestions.intValue;
-            } else { // If no question found in jsons, continue to keywords pairs and hope for the best
-                checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
-                if (checkKeywords.boolValue) {
-                    numberOfLetters = checkKeywords.intValue;
-                }
-            }
-            // If all fails, give user some random input.
-            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
+			if (checkQuestions.boolValue) {
+				numberOfLetters = checkQuestions.intValue;
+			} else { // If no question found in jsons, continue to keywords pairs and hope for the best
+				checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
+				if (checkKeywords.boolValue) {
+					numberOfLetters = checkKeywords.intValue;
+				}
+			}
+			// If all fails, give user some random input.
+            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {//&& !checkQuestionsWordsOccurences.boolValue ) {
                 const randomResponse = getRandomResponse();
-                numberOfLetters = countLetters(randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
+				numberOfLetters = countLetters(randomResponse);
+				await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
                 await simulateBotTyping(50, randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 1000));
+				await new Promise(resolve => setTimeout(resolve, 1000));
             }
         } catch (error) {
             console.error("An error occurred:", error);
         }
-        await new Promise(resolve => setTimeout(resolve, 1000));
+		await new Promise(resolve => setTimeout(resolve, 1000));
         if (numberOfLetters != 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
     }
 }
-sendBtn.addEventListener("click", handleUserInput);
-userInput.addEventListener("keydown", function(event) {
+sendBtn.addEventListener("click", handleUserInput);				
+userInput.addEventListener("keydown", function(event) {			
     if (event.key === "Enter") {
-        event.preventDefault();
-        handleUserInput();
+        event.preventDefault(); 
+        handleUserInput(); 
         console.log("Send button clicked");
     }
 });
@@ -207,102 +223,114 @@ async function simulateBotTyping(delayForWords, botResponse) {
         }
     }, delayForWords);
 
-    // Create and append skip button to the document body
-    const skipButton = document.getElementById("skipButton");
-    skipButton.textContent = "Skip";
-    skipButton.classList.add("skip-button");
-    document.body.appendChild(skipButton);
-
-    // Event listener to remove typing effect and display full message when skip button is clicked
-    skipButton.addEventListener("click", (event) => {
-        event.stopPropagation();
+    // Display the response after typing delay
+    await new Promise(resolve => setTimeout(() => {
         clearInterval(typingInterval);
         displayResponse();
-        console.log("Skip button clicked");
-    });
+        resolve();
+    }, delayForWords * botResponse.length + 500));
 }
 
-// Helper function to match the question directly to avoid multiple operations
-async function checkJsonQuestions(question, jsonCategories) {
-    try {
-        for (const category of jsonCategories) {
-            const response = await fetch(`./${category}.json`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
-            }
+// Keyword extraction and answer search function
+async function findBestAnswer(question, jsonFiles) {
+    const cleanedQuestion = cleanStrings(question);
+    let bestAnswer = "";
+    let bestAnswerValue = -1;
+    let jsonData = [];
 
-            const jsonArray = await response.json();
-            for (const jsonField of jsonArray) {
-                const cleanedQuestion = cleanStringsKeepSpaces(jsonField["question"]);
-                if (question === cleanedQuestion.toLowerCase()) {
-                    simulateBotTyping(50, jsonField["answer"]);
-                    let numberOfLetters = countLetters(jsonField["answer"]);
-                    const result = [numberOfLetters, true];
-                    result.intValue = result[0];
-                    result.boolValue = result[1];
-                    return result; // Match found => return true immediately
-                }
+    // Load JSON data from each file in the array
+    for (const jsonFile of jsonFiles) {
+        try {
+            const response = await fetch(jsonFile + ".json");
+            const data = await response.json();
+            jsonData.push(...data);
+        } catch (error) {
+            console.error("Error loading or parsing JSON:", error);
+            continue;
+        }
+    }
+
+    // Process JSON data
+    for (const category of jsonData) {
+        for (const keyword of category.keywords) {
+            const cleanedKeyword = cleanStrings(keyword);
+
+            if (cleanedQuestion.includes(cleanedKeyword) && cleanedKeyword.length > bestAnswerValue) {
+                bestAnswer = category.answer;
+                bestAnswerValue = cleanedKeyword.length;
             }
         }
-    } catch (error) {
-        console.error("Error loading or parsing JSON:", error);
-        return false; // Return false in case of error
     }
-    return false; // No matches found in questions
+
+    if (bestAnswer) {
+        await simulateBotTyping(50, bestAnswer);
+        return { boolValue: true, intValue: bestAnswerValue };
+    }
+    return { boolValue: false, intValue: 0 };
 }
 
-// Helper function to find best answer from json
-async function findBestAnswer(userMessage, jsonKeywords) {
-    try {
-        for (const keywordFile of jsonKeywords) {
-            const response = await fetch(`./${keywordFile}.json`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${keywordFile}.json: ${response.status} - ${response.statusText}`);
-            }
+// Helper function to clean strings
+function cleanStrings(inputString) {
+    return inputString.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+}
 
-            const keywordPairs = await response.json();
-            let bestMatch = "";
-            let bestMatchAnswer = "";
+// Helper function to clean strings but keep spaces
+function cleanStringsKeepSpaces(inputString) {
+    return inputString.replace(/[^a-zA-Z0-9\s]/g, "").toLowerCase();
+}
 
-            // Find the best matching answer
-            for (const pair of keywordPairs) {
-                const keywords = pair.keywords;
-                for (const keyword of keywords) {
-                    if (userMessage.includes(keyword)) {
-                        if (keyword.length > bestMatch.length) {
-                            bestMatch = keyword;
-                            bestMatchAnswer = pair.answer;
-                        }
-                    }
-                }
-            }
+// Function to check questions
+async function checkJsonQuestions(question, jsonFiles) {
+    let bestAnswer = "";
+    let bestAnswerValue = -1;
+    let jsonData = [];
 
-            if (bestMatchAnswer !== "") {
-                await simulateBotTyping(50, bestMatchAnswer);
-                const numberOfLetters = countLetters(bestMatchAnswer);
-                const result = [numberOfLetters, true];
-                result.intValue = result[0];
-                result.boolValue = result[1];
-                return result; // Return the result object directly
-            }
+    // Load JSON data from each file in the array
+    for (const jsonFile of jsonFiles) {
+        try {
+            const response = await fetch(jsonFile + ".json");
+            const data = await response.json();
+            jsonData.push(...data);
+        } catch (error) {
+            console.error("Error loading or parsing JSON:", error);
+            continue;
         }
-    } catch (error) {
-        console.error("Error loading or parsing JSON:", error);
     }
-    return false; // Return false if no best match is found
+
+    // Process JSON data
+    for (const category of jsonData) {
+        const cleanedQuestionInJson = cleanStrings(category.question);
+        const cleanedQuestion = cleanStrings(question);
+
+        if (cleanedQuestionInJson === cleanedQuestion && cleanedQuestion.length > bestAnswerValue) {
+            bestAnswer = category.answer;
+            bestAnswerValue = cleanedQuestion.length;
+        }
+    }
+
+    if (bestAnswer) {
+        await simulateBotTyping(50, bestAnswer);
+        return { boolValue: true, intValue: bestAnswerValue };
+    }
+    return { boolValue: false, intValue: 0 };
 }
 
-// Function for counting letters in an answer
-function countLetters(answer) {
-    const cleanedAnswer = cleanStringsKeepSpaces(answer); // Clean the input answer
-    return cleanedAnswer.length;
+// Helper function to count letters in a string
+function countLetters(inputString) {
+    return inputString.replace(/[^a-zA-Z]/g, "").length;
 }
 
-// Function to clean strings, only allowing spaces and letters
-function cleanStringsKeepSpaces(input) {
-    if (typeof input !== 'string') {
-        console.error('Expected a string but received:', input);
-        return ''; // Return an empty string or handle it appropriately
+popoverButton.addEventListener("click", () => {
+    popoverContent.style.display = popoverContent.style.display === "block" ? "none" : "block";
+});
+
+document.addEventListener("click", (event) => {
+    const isClickInsidePopover = popoverButton.contains(event.target) || popoverContent.contains(event.target);
+    if (!isClickInsidePopover) {
+        popoverContent.style.display = "none";
     }
-    return input.replace(/[^a-zA-Z\s]/g, '');
-}
+});
+
+reportButton.addEventListener("click", () => {
+    window.location.href = "https://example.com/report";
+});
