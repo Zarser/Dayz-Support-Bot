@@ -1,6 +1,6 @@
 [
 	{
-        "keywords": ["best ammo", "best ammunition"],
+        "keywords": "best ammo", "best ammunition",
         "question": "What is the best ammo?", 
         "answer": "There are multiple stats to compare in order to determine which is the best ammunition in DayZ, but on a general note, 7.62x54mmR is the best, as it's pretty common to find and packs a serious punch. Next would be .308."
     },
