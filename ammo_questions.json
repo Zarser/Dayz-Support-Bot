@@ -1,59 +1,72 @@
 [
-	{
-        "keywords": "best ammo", "best ammunition",
+    {
+        "keywords": "best+ammo+ammunition",
         "question": "What is the best ammo?", 
         "answer": "There are multiple stats to compare in order to determine which is the best ammunition in DayZ, but on a general note, 7.62x54mmR is the best, as it's pretty common to find and packs a serious punch. Next would be .308."
     },
-	{
-		"question": "What is the best ammunition?",
-		"answer": "There are multiple stats to compare in order to determine which is the best ammunition in DayZ, but on a general note, 7.62x54mmR is the best, as it's pretty common to find and packs a serious punch. Next would be .308."
-	},
-	{
-		"question": "7.62x54mmR or .308?",
-		"answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
-	},
-	{
-		"question": "7.62x54mm or .308?",
-		"answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
-	},
-	{
-		"question": "7.62x54 or .308?",
-		"answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
-	},
-	{
-		"question": ".308 or 7.62x54?",
-		"answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
-	},
-	{
-		"question": ".308 or 7.62x54mm?",
-		"answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
-	},
-	{
-		"question": ".308 or 7.62x54mmR?",
-		"answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
-	},
-	{
-		"question": "7.62x39mm or 7.62x54mmR?",
-		"answer": "The game uses some very accurate real world ballistics. 7.62x54mmR is much stronger than 7.62x39mm."
-	},
-	{
-		"question": "7.62x39 or 7.62x54?",
-		"answer": "The game uses some very accurate real world ballistics. 7.62x54mmR is much stronger than 7.62x39mm."
-	},
-	{
-		"question": "7.62x54mmR or 7.62x39mm",
-		"answer": "The game uses some very accurate real world ballistics. 7.62x54mmR is much stronger than 7.62x39mm."
-	},
-	{
-		"question": "7.62x54 or 7.62x39",
-		"answer": "The game uses some very accurate real world ballistics. 7.62x54mmR is much stronger than 7.62x39mm."
-	},
-	{
-		"question": "7.62x39mm or 5.56x45mm?",
-		"answer": "The game uses some very accurate real world ballistics. 7.62x39mm is stronger than 5.56x45mm."
-	},
-	{
-		"question": "Ammo Types?",
-		"answer": "Ammo types found in DayZ: 9x19mm, .357, .45 ACP, .380 ACP, .308 WIN, .22 LR, Flare, 12ga, 5.56x45mm, 5.45x39mm, 7.62x39mm, 9x39mm."
-	}
+    {
+        "keywords": "best+ammunition+ammo",
+        "question": "What is the best ammunition?",
+        "answer": "There are multiple stats to compare in order to determine which is the best ammunition in DayZ, but on a general note, 7.62x54mmR is the best, as it's pretty common to find and packs a serious punch. Next would be .308."
+    },
+    {
+        "keywords": "7.62x54mmR+.308+best+worst",
+        "question": "7.62x54mmR or .308?",
+        "answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
+    },
+    {
+        "keywords": "7.62x54mm+.308+best+worst",
+        "question": "7.62x54mm or .308?",
+        "answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
+    },
+    {
+        "keywords": "7.62x54+.308+best+worst",
+        "question": "7.62x54 or .308?",
+        "answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
+    },
+    {
+        "keywords": ".308+7.62x54+best+worst",
+        "question": ".308 or 7.62x54?",
+        "answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
+    },
+    {
+        "keywords": ".308+7.62x54mm+best+worst",
+        "question": ".308 or 7.62x54mm?",
+        "answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
+    },
+    {
+        "keywords": ".308+7.62x54mmR+best+worst",
+        "question": ".308 or 7.62x54mmR?",
+        "answer": "The game uses some very accurate real world ballistics. They're nearly identical. However, 7.62x54 is more common, therefore it can be a better choice, but at the end of the day, it comes down to preference."
+    },
+    {
+        "keywords": "7.62x39mm+7.62x54mmR+best+worst",
+        "question": "7.62x39mm or 7.62x54mmR?",
+        "answer": "The game uses some very accurate real world ballistics. 7.62x54mmR is much stronger than 7.62x39mm."
+    },
+    {
+        "keywords": "7.62x39+7.62x54+best+worst",
+        "question": "7.62x39 or 7.62x54?",
+        "answer": "The game uses some very accurate real world ballistics. 7.62x54mmR is much stronger than 7.62x39mm."
+    },
+    {
+        "keywords": "7.62x54mmR+7.62x39mm+best+worst",
+        "question": "7.62x54mmR or 7.62x39mm?",
+        "answer": "The game uses some very accurate real world ballistics. 7.62x54mmR is much stronger than 7.62x39mm."
+    },
+    {
+        "keywords": "7.62x54+7.62x39+best+worst",
+        "question": "7.62x54 or 7.62x39?",
+        "answer": "The game uses some very accurate real world ballistics. 7.62x54mmR is much stronger than 7.62x39mm."
+    },
+    {
+        "keywords": "7.62x39mm+5.56x45mm+best+worst",
+        "question": "7.62x39mm or 5.56x45mm?",
+        "answer": "The game uses some very accurate real world ballistics. 7.62x39mm is stronger than 5.56x45mm."
+    },
+    {
+        "keywords": "ammo+types+DayZ+list",
+        "question": "Ammo Types?",
+        "answer": "Ammo types found in DayZ: 9x19mm, .357, .45 ACP, .380 ACP, .308 WIN, .22 LR, Flare, 12ga, 5.56x45mm, 5.45x39mm, 7.62x39mm, 9x39mm."
+    }
 ]
