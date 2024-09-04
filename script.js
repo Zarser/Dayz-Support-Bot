@@ -274,34 +274,21 @@ async function findBestAnswer(question, keywordsCategories) {
             try {
                 const jsonArray = JSON.parse(jsonText);
                 for (const jsonField of jsonArray) {
-                    const keywordArray = jsonField["keywords"];
+                    const keywordArray = Array.isArray(jsonField["keywords"]) ? jsonField["keywords"] : [jsonField["keywords"]];
                     let matchScore = 0;
 
                     // Check combinations of keywords
                     keywordArray.forEach(keywordCombo => {
-                        if (question === keywordCombo.toLowerCase()) {
-                            return 100;
+                        if (question.includes(keywordCombo.toLowerCase())) {
+                            matchScore += 10; // Increase score for a match
+                        } else {
+                            const comboKeywordsArray = keywordCombo.toLowerCase().split(' ');
+                            comboKeywordsArray.forEach(keyword => {
+                                if (question.includes(keyword)) {
+                                    matchScore += 5; // Increase score for each keyword match
+                                }
+                            });
                         }
-                        const comboKeywordsArray = keywordCombo.toLowerCase().split('+');
-                        comboKeywordsArray.forEach(keyword => {
-                            if (question.includes(keyword)) {
-                                matchScore++;
-                            }
-                        });
-                    });
-
-                    // Check single keywords
-                    keywordArray.forEach(keywordCombo => {
-                        const cleanedKeywordArray = keywordCombo.toLowerCase().split(" ");
-                        cleanedKeywordArray.forEach(cleanedKeyword => {
-                            if (question === cleanedKeyword) {
-                                return 100;
-                            }
-                            const regex = new RegExp(`\\b${cleanedKeyword}\\b`, 'i');
-                            if (regex.test(question)) {
-                                matchScore++;
-                            }
-                        });
                     });
 
                     // Update the best answer based on the match score
@@ -333,6 +320,7 @@ async function findBestAnswer(question, keywordsCategories) {
     }
     return [0, false];
 }
+
 
 function checkQuestionMatch(userQuestion, keywordCombinationsString) {
     let occurrences = 0;
