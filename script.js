@@ -105,6 +105,7 @@ async function handleUserInput() {
 
     if (question !== "") {
         displayUserMessage(question);
+
         try {
             const categoryResults = await checkJsonQuestions(question, ["ammo_questions", "general_questions", "guns_questions", "medical_questions"]);
             if (categoryResults.boolValue) {
