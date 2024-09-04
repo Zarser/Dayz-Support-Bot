@@ -316,8 +316,8 @@ async function findBestAnswer(question, keywordsCategories) {
             let numberOfLetters = countLetters(bestAnswer);
             return [numberOfLetters, true];
         } else {
-            // Optionally provide a fallback response if no match is found
-            const fallbackResponse = "Sorry, I couldn't find an answer to your question.";
+            // Only show a random response if no best answer is found
+            const fallbackResponse = randomResponses[Math.floor(Math.random() * randomResponses.length)];
             await simulateBotTyping(50, fallbackResponse);
             let numberOfLetters = countLetters(fallbackResponse);
             return [numberOfLetters, false];
@@ -327,6 +327,7 @@ async function findBestAnswer(question, keywordsCategories) {
         return [0, false];
     }
 }
+
 
 
 
