@@ -27,6 +27,9 @@ const greetings = [
     "Welcome, traveler! How can I assist you today?",
     "Hey, survivor! Ready to dive into some DayZ knowledge?",
     "Greetings! What DayZ questions do you have?",
+    "Wazzzzup!?!?",
+    "Y0! I CANT help you with cheating but maybe other questions."
+    "HOORAY! Problem in paradise?",
 ];
 
 const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard", "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy", "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker", "asshole", "bastard", "moron", "idiot", "anal", "fag", "faggot", "gay", "homosexual","mf", "suck my balls", "eat shit"];
@@ -88,7 +91,7 @@ async function handleUserInput() {
     }
 
     // Handle greetings
-    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up)\\b`, 'i');
+    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up|yo|zup)\\b`, 'i');
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
