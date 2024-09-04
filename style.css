@@ -23,8 +23,11 @@
 .user-input .form-control {
     flex-grow: 1;
     margin-right: 10px;
-    height: 40px; /* Ensuring consistent height */
-    box-sizing: border-box;
+    height: 40px; /* Fixed height */
+    box-sizing: border-box; /* Ensure padding and border are included in the height */
+    padding: 8px; /* Adjust padding if needed */
+    line-height: 1.5; /* Ensure line-height doesn't cause the field to grow */
+    overflow: hidden; /* Prevent the input from expanding in height */
 }
 
 .btn-group {
@@ -35,8 +38,8 @@
 .btn-group .btn {
     margin-left: 5px;
     height: 40px; /* Match the height of the input field */
-    padding-top: 0; /* Remove extra padding */
-    padding-bottom: 0; /* Remove extra padding */
+    padding-top: 0;
+    padding-bottom: 0;
     display: flex;
     align-items: center;
     justify-content: center;
