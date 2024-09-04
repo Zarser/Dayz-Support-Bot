@@ -235,38 +235,24 @@ async function findBestAnswer(question, keywordsCategories) {
         let bestAnswer = null;
         let bestMatchScore = 0;
 
-        for (const keyword of keywordsCategories) {
-            const response = await fetch(`./${keyword}.json`);
+        for (const category of keywordsCategories) {
+            const response = await fetch(`${category}.json`);
             if (!response.ok) {
-                console.error(`Failed to fetch ./${keyword}.json: ${response.status}`);
-                continue;
+                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
             }
             const jsonText = await response.text();
-
             try {
                 const jsonArray = JSON.parse(jsonText);
                 for (const jsonField of jsonArray) {
-                    const keywordArray = Array.isArray(jsonField["keywords"]) ? jsonField["keywords"] : [jsonField["keywords"]];
                     let matchScore = 0;
-                    const lowerCaseQuestion = question.toLowerCase();
 
-                    keywordArray.forEach(keywordCombo => {
-                        const lowerCaseKeywordCombo = keywordCombo.toLowerCase();
-                        if (lowerCaseQuestion.includes(lowerCaseKeywordCombo)) {
-                            matchScore += 10;
-                        } else {
-                            const comboKeywordsArray = lowerCaseKeywordCombo.split(' ');
-                            comboKeywordsArray.forEach(keyword => {
-                                if (lowerCaseQuestion.includes(keyword)) {
-                                    matchScore += 5;
-                                }
-                            });
-                        }
-                    });
+                    if (jsonField.keywords.some(keyword => question.includes(keyword.toLowerCase()))) {
+                        matchScore += 1;
+                    }
 
                     if (matchScore > bestMatchScore) {
                         bestMatchScore = matchScore;
-                        bestAnswer = jsonField["answer"];
+                        bestAnswer = jsonField.answer;
                     }
                 }
             } catch (jsonParseError) {
@@ -274,29 +260,28 @@ async function findBestAnswer(question, keywordsCategories) {
             }
         }
 
-        if (bestAnswer) {
+        if (bestAnswer !== null) {
             await simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
             return { intValue: numberOfLetters, boolValue: true };
-        } else {
-            const fallbackResponse = getRandomResponse();
-            await simulateBotTyping(50, fallbackResponse);
-            let numberOfLetters = countLetters(fallbackResponse);
-            return { intValue: numberOfLetters, boolValue: false };
         }
     } catch (error) {
-        console.error("Error in findBestAnswer:", error);
-        return { intValue: 0, boolValue: false };
+        console.error("Error loading or parsing JSON:", error);
     }
+    return { boolValue: false }; // No matches found in keywords
 }
 
-function countLetters(sentence) {
-    return sentence.length;
+function countLetters(text) {
+    return text.replace(/\s/g, "").length;
 }
 
-function cleanStringsKeepSpaces(input) {
-    return input.replace(/[^a-zA-Z\s]/g, '');
+function cleanStringsKeepSpaces(inputString) {
+    return inputString
+        .replace(/[^a-zA-Z\s]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
 }
+
 
 popoverButton.addEventListener("click", () => {
     popoverContent.classList.toggle("show");
