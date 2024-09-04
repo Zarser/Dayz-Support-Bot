@@ -46,47 +46,47 @@
     },
     {
         "question": "How do you manage health?",
-        "keywords": ["health", "management"],
+        "keywords": ["manage", "health"],
         "answer": "Monitor your health, hunger, thirst, and overall condition regularly. Eat and drink to maintain energy and hydration, and use medical supplies to treat injuries and illnesses."
     },
     {
         "question": "How do you manage inventory?",
-        "keywords": ["inventory", "management"],
+        "keywords": ["manage", "inventory"],
         "answer": "Organize your inventory efficiently to carry essential items and maximize storage space. Prioritize items like food, water, medical supplies, and defensive equipment."
     },
     {
         "question": "How do you navigate and explore?",
-        "keywords": ["navigation", "exploration"],
+        "keywords": ["navigate", "explore"],
         "answer": "Use landmarks, signs, and the in-game map to navigate. Learn to read road signs, town names, and topographical features for effective navigation."
     },
     {
         "question": "How do you craft and gather?",
-        "keywords": ["crafting", "gathering"],
+        "keywords": ["craft", "gather"],
         "answer": "Gather materials from the environment, such as sticks, rags, and stones. Craft basic tools like improvised weapons, clothing, and backpacks."
     },
     {
         "question": "How do you manage zombies and threats?",
-        "keywords": ["zombies", "threat", "management"],
+        "keywords": ["manage", "zombies", "threats"],
         "answer": "Approach zombies carefully or avoid them to minimize combat risk. Use melee weapons or firearms to defend against zombies and other hostile players."
     },
     {
         "question": "How do you start fires and cook?",
-        "keywords": ["fire", "starting", "cooking"],
+        "keywords": ["start fires", "cook"],
         "answer": "Start fires using matches, lighters, or other ignition sources. Cook raw food to prevent illness and increase its nutritional value."
     },
     {
         "question": "How do you build shelters?",
-        "keywords": ["shelter", "building"],
+        "keywords": ["build", "shelters"],
         "answer": "Set up temporary shelters to rest and store supplies. Use tents or improvised shelters to protect yourself from the elements."
     },
     {
         "question": "How do you interact with other survivors?",
-        "keywords": ["interaction", "survivors"],
+        "keywords": ["interact", "survivors"],
         "answer": "Approach other survivors cautiously. Assess situations before engaging and be prepared for both friendly interactions and potential threats."
     },
     {
         "question": "How do you perform medical procedures?",
-        "keywords": ["medical", "procedures"],
+        "keywords": ["perform", "medical procedures"],
         "answer": "Disinfect wounds, apply bandages, and use medical supplies to heal injuries. Use splints to treat fractures and prevent further damage."
     },
     {
@@ -96,22 +96,22 @@
     },
     {
         "question": "How do you communicate?",
-        "keywords": ["communication", "chat"],
+        "keywords": ["communicate", "communication"],
         "answer": "Use in-game voice or text chat to communicate with other survivors. Coordinate with allies to enhance survival chances."
     },
     {
         "question": "How do you use stealth and avoidance?",
-        "keywords": ["stealth", "avoidance"],
+        "keywords": ["use", "stealth", "avoidance"],
         "answer": "Use cover and concealment to avoid detection by zombies and survivors. Crouch or go prone to reduce visibility and noise."
     },
     {
         "question": "How do you find loot in DayZ?",
-        "keywords": ["loot", "DayZ"],
+        "keywords": ["find", "loot", "DayZ"],
         "answer": "Scavenge the world to find gear and weapons for survival. Options range from houses and barns to police stations and military bases."
     },
     {
         "question": "How do you find weapons?",
-        "keywords": ["weapons", "finding"],
+        "keywords": ["find", "weapons"],
         "answer": "Weapons can be found in various places like houses, barns, police stations, and military bases. Alternatively, acquire them from other survivors."
     },
     {
