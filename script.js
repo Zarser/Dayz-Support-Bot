@@ -282,20 +282,20 @@ async function findBestAnswer(question, keywordsCategories) {
                     const lowerCaseQuestion = question.toLowerCase();
 
                     keywordArray.forEach(keywordCombo => {
-    const lowerCaseKeywordCombo = keywordCombo.toLowerCase();
-    const comboKeywordsArray = lowerCaseKeywordCombo.split(' ');
-    let comboMatch = comboKeywordsArray.every(keyword => lowerCaseQuestion.includes(keyword));
-
-    if (comboMatch) {
-        matchScore += 10;
-    } else {
-        comboKeywordsArray.forEach(keyword => {
-            if (lowerCaseQuestion.includes(keyword)) {
-                matchScore += 5;
-            }
-        });
-    }
-});
+                        const lowerCaseKeywordCombo = keywordCombo.toLowerCase();
+                        // Check if the keyword combo exists in the question
+                        if (lowerCaseQuestion.includes(lowerCaseKeywordCombo)) {
+                            matchScore += 10;
+                        } else {
+                            // Split the keyword combo into individual keywords
+                            const comboKeywordsArray = lowerCaseKeywordCombo.split(' ');
+                            comboKeywordsArray.forEach(keyword => {
+                                if (lowerCaseQuestion.includes(keyword)) {
+                                    matchScore += 5;
+                                }
+                            });
+                        }
+                    });
 
                     // Update best answer if the current match score is better
                     if (matchScore > bestMatchScore) {
@@ -310,18 +310,24 @@ async function findBestAnswer(question, keywordsCategories) {
             }
         }
 
+        // Handle case where no best answer was found
         if (bestAnswer) {
             await simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
             return [numberOfLetters, true];
         } else {
-            return [0, false];
+            // Optionally provide a fallback response if no match is found
+            const fallbackResponse = "Sorry, I couldn't find an answer to your question.";
+            await simulateBotTyping(50, fallbackResponse);
+            let numberOfLetters = countLetters(fallbackResponse);
+            return [numberOfLetters, false];
         }
     } catch (error) {
         console.error("Error in findBestAnswer:", error);
         return [0, false];
     }
 }
+
 
 
 
