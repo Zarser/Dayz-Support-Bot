@@ -28,7 +28,7 @@ const greetings = [
     "Hey, survivor! Ready to dive into some DayZ knowledge?",
     "Greetings! What DayZ questions do you have?",
     "Wazzzzup!?!?",
-    "Y0! I CANT help you with cheating but maybe other questions."
+    "Y0! I CANT help you with cheating but maybe other questions.",
     "HOORAY! Problem in paradise?",
 ];
 
