@@ -277,15 +277,19 @@ async function findBestAnswer(question, keywordsCategories) {
                     const keywordArray = Array.isArray(jsonField["keywords"]) ? jsonField["keywords"] : [jsonField["keywords"]];
                     let matchScore = 0;
 
-                    // Check combinations of keywords
+                    // Convert question to lowercase for case-insensitive matching
+                    const lowerCaseQuestion = question.toLowerCase();
+
+                    // Check for exact matches and partial matches in keywords
                     keywordArray.forEach(keywordCombo => {
-                        if (question.includes(keywordCombo.toLowerCase())) {
-                            matchScore += 10; // Increase score for a match
+                        const lowerCaseKeywordCombo = keywordCombo.toLowerCase();
+                        if (lowerCaseQuestion.includes(lowerCaseKeywordCombo)) {
+                            matchScore += 10; // Exact match score
                         } else {
-                            const comboKeywordsArray = keywordCombo.toLowerCase().split(' ');
+                            const comboKeywordsArray = lowerCaseKeywordCombo.split(' ');
                             comboKeywordsArray.forEach(keyword => {
-                                if (question.includes(keyword)) {
-                                    matchScore += 5; // Increase score for each keyword match
+                                if (lowerCaseQuestion.includes(keyword)) {
+                                    matchScore += 5; // Partial match score
                                 }
                             });
                         }
@@ -321,37 +325,6 @@ async function findBestAnswer(question, keywordsCategories) {
     return [0, false];
 }
 
-
-function checkQuestionMatch(userQuestion, keywordCombinationsString) {
-    let occurrences = 0;
-    // Check combinations of keywords
-    keywordCombinationsString.split('+').forEach(keywordCombo => {
-        if (userQuestion === keywordCombo) {
-            return 100;
-        }
-        const comboKeywordsArray = keywordCombo.split('+');
-        comboKeywordsArray.forEach(keyword => {
-            if (userQuestion.includes(keyword)) {
-                occurrences++;
-            }
-        });
-    });
-    // Check single keywords
-    keywordCombinationsString.split('+').forEach(keyword => {
-        const cleanedKeywordArray = keyword.split(" ");
-        cleanedKeywordArray.forEach(cleanedKeyword => {
-            if (userQuestion === cleanedKeyword) {
-                return 100;
-            }
-            const regex = new RegExp(`\\b${cleanedKeyword}\\b`, 'i');
-            if (regex.test(userQuestion)) {
-                occurrences++;
-            }
-        });
-    });
-    // Return occurrences for a ranking system
-    return occurrences;
-}
 
 // Helper function to count letters
 function countLetters(sentence) {
