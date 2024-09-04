@@ -262,6 +262,7 @@ async function findBestAnswer(question, keywordsCategories) {
     try {
         let bestAnswer = null;
         let bestMatchScore = 0;
+
         for (const keyword of keywordsCategories) {
             const response = await fetch(`./${keyword}.json`);
             if (!response.ok) {
@@ -269,37 +270,45 @@ async function findBestAnswer(question, keywordsCategories) {
             }
             const jsonText = await response.text();
             console.log("JSON Text:", jsonText); // Log raw JSON for debugging
+
             try {
                 const jsonArray = JSON.parse(jsonText);
                 for (const jsonField of jsonArray) {
-                    const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
-                    let match = false; // Assume no match
-                    for (const keywordInCombinations of keywordCombinations) { // first go through the combinations
-                        const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
-                        if (regex.test(question)) {
-                            match = true;
-                            break;
+                    const keywordArray = jsonField["keywords"];
+                    let matchScore = 0;
+
+                    // Check combinations of keywords
+                    keywordArray.forEach(keywordCombo => {
+                        if (question === keywordCombo.toLowerCase()) {
+                            return 100;
                         }
-                    }
-                    if (!match) { // if no matches happen, go through single keywords and match
-                        for (const keywordInCombinations of keywordCombinations) {            
-                            let keywordArray = keywordInCombinations.split(" ");
-                            for (const keyword of keywordArray) {
-                                const regex = new RegExp(`\\b${keyword}\\b`);
-                                if (regex.test(question)) {
-                                    match = true;
-                                    break;
-                                }
+                        const comboKeywordsArray = keywordCombo.toLowerCase().split('+');
+                        comboKeywordsArray.forEach(keyword => {
+                            if (question.includes(keyword)) {
+                                matchScore++;
                             }
-                        }
-                    }
-                    if (match) { // if match, create a match score
-                        const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
-                        if (matchScore > bestMatchScore) {
-                            bestMatchScore = matchScore;
-                            bestAnswer = jsonField["answer"];
-                            console.log("Best answer:", bestAnswer);
-                        }
+                        });
+                    });
+
+                    // Check single keywords
+                    keywordArray.forEach(keywordCombo => {
+                        const cleanedKeywordArray = keywordCombo.toLowerCase().split(" ");
+                        cleanedKeywordArray.forEach(cleanedKeyword => {
+                            if (question === cleanedKeyword) {
+                                return 100;
+                            }
+                            const regex = new RegExp(`\\b${cleanedKeyword}\\b`, 'i');
+                            if (regex.test(question)) {
+                                matchScore++;
+                            }
+                        });
+                    });
+
+                    // Update the best answer based on the match score
+                    if (matchScore > bestMatchScore) {
+                        bestMatchScore = matchScore;
+                        bestAnswer = jsonField["answer"];
+                        console.log("Best answer:", bestAnswer);
                     }
                 }
             } catch (jsonParseError) {
@@ -307,7 +316,8 @@ async function findBestAnswer(question, keywordsCategories) {
                 console.error("Problematic JSON text:", jsonText);
             }
         }
-        if (bestAnswer) { // if best answer is found, return it
+
+        if (bestAnswer) {
             await simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
             const result = [numberOfLetters, true];
