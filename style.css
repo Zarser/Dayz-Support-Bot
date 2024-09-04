@@ -14,43 +14,16 @@
 }
 
 .user-input {
-    display: flex;
     padding: 10px;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.user-input .form-control {
-    flex-grow: 1;
-    margin-right: 10px;
-    height: 40px; /* Fixed height */
-    box-sizing: border-box; /* Ensure padding and border are included in the height */
-    padding: 8px; /* Adjust padding if needed */
-    line-height: 1.5; /* Ensure line-height doesn't cause the field to grow */
-    overflow: hidden; /* Prevent the input from expanding in height */
-}
-
-.btn-group {
-    display: flex;
-    align-items: center;
-}
-
-.btn-group .btn {
-    margin-left: 5px;
-    height: 40px; /* Match the height of the input field */
-    padding-top: 0;
-    padding-bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .chat-box {
     border: 3px solid #ccc;
     border-radius: 10px;
     height: 700px;
+    width: 100%; 
     width: 800px;
-    overflow: auto;
+	overflow: auto;
 }
 
 .navbar {
@@ -74,9 +47,9 @@
 }
 
 .bot-avatar {
-    width: 30px;
-    height: auto;
-    margin-right: 5px;
+    width: 30px; 
+    height: auto; 
+    margin-right: 5px; 
 }
 
 .chatbubble {
@@ -100,8 +73,8 @@
 .popover-content {
     display: none;
     position: absolute;
-    top: 10px;
-    left: 40px;
+    top: 10px; /* Adjusted to be 10px lower */
+    left: 40px; /* Adjusted to be 10px from the side */
     background-color: #f9f9f923;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px;
@@ -110,8 +83,8 @@
 }
 
 .report-button {
-    font-size: 8px;
-    padding: 4px 8px;
+    font-size: 8px; /* Adjust the font size as needed */
+    padding: 4px 8px; /* Adjust the padding as needed */
 }
 
 .show {
