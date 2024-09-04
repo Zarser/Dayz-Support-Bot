@@ -1,3 +1,40 @@
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+/* Navbar Styles */
+.navbar {
+    width: 100%;
+}
+
+/* Chat Box Styles */
+.chat-box {
+    border: 3px solid #ccc;
+    border-radius: 10px;
+    height: 60vh; /* Adjusted height for responsiveness */
+    width: 100%;  /* Full width with responsive design */
+    max-width: 800px; /* Max width to prevent it from becoming too large */
+    margin: 0 auto; /* Center the chat box */
+    overflow: auto;
+}
+
+/* User Input Styles */
+.user-input {
+    padding: 10px;
+}
+
+/* Bot Messages */
 .bot-message {
     background-color: #7c7c7c;
     color: white;
@@ -6,33 +43,7 @@
     margin: 5px 0;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    justify-content: space-between;
-}
-
-.user-input {
-    padding: 10px;
-}
-
-.chat-box {
-    border: 3px solid #ccc;
-    border-radius: 10px;
-    height: 700px;
-    width: 100%; 
-    width: 800px;
-	overflow: auto;
-}
-
-.navbar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-
+/* Navbar Text */
 .navbar h1 {
     text-align: center;
     width: 100%;
@@ -40,25 +51,28 @@
     padding: 10px 0;
 }
 
+/* Example Questions */
 .example-questions {
-    margin-top: 100px;
-    margin-bottom: 15px;
+    margin: 20px 0; /* Adjusted for better spacing */
     text-align: center;
 }
 
+/* Bot Avatar */
 .bot-avatar {
     width: 30px; 
     height: auto; 
     margin-right: 5px; 
 }
 
+/* Chat Bubble */
 .chatbubble {
     position: relative;
     display: inline-block;
-    margin-top: 40px;
+    margin-top: 10px; /* Adjusted margin */
     left: 5px;
 }
 
+/* Popover Button */
 .popover-button {
     background-color: #3498db;
     color: white;
@@ -70,29 +84,65 @@
     cursor: pointer;
 }
 
+/* Popover Content */
 .popover-content {
     display: none;
     position: absolute;
-    top: 10px; /* Adjusted to be 10px lower */
-    left: 40px; /* Adjusted to be 10px from the side */
-    background-color: #f9f9f923;
+    top: 30px; /* Adjusted position */
+    left: 30px; /* Adjusted position */
+    background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px;
     border-radius: 5px;
     z-index: 1;
 }
 
+/* Report Button */
 .report-button {
-    font-size: 8px; /* Adjust the font size as needed */
-    padding: 4px 8px; /* Adjust the padding as needed */
+    font-size: 8px;
+    padding: 4px 8px;
 }
 
+/* Show Class */
 .show {
     display: block;
 }
 
-div.terms {
-    color: white;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chat-box {
+        height: 50vh; /* Adjust height for smaller screens */
+    }
+
+    .user-input {
+        flex-direction: column;
+    }
+
+    .user-input input,
+    .user-input button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
 }
 
+@media (max-width: 576px) {
+    .popover-button {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
 
+    .report-button {
+        font-size: 7px;
+        padding: 3px 6px;
+    }
+
+    .chat-box {
+        height: 40vh; /* Further adjustment for very small screens */
+    }
+
+    .user-input input,
+    .user-input button {
+        width: 100%;
+    }
+}
