@@ -15,15 +15,31 @@
 
 .user-input {
     padding: 10px;
+    display: flex; /* Use flexbox to align the input and buttons */
+    justify-content: space-between; /* Ensure proper spacing between input and buttons */
+    align-items: center; /* Align items vertically in the center */
+}
+
+.user-input .form-control {
+    flex-grow: 1; /* Allow the input field to take up available space */
+    margin-right: 10px; /* Add some space between the input field and buttons */
+}
+
+.btn-group {
+    display: flex;
+    align-items: center; /* Ensure buttons are vertically aligned with the input field */
+}
+
+.btn-group .btn {
+    margin-left: 5px; /* Add some spacing between the buttons */
 }
 
 .chat-box {
     border: 3px solid #ccc;
     border-radius: 10px;
     height: 700px;
-    width: 100%; 
     width: 800px;
-	overflow: auto;
+    overflow: auto;
 }
 
 .navbar {
@@ -94,4 +110,3 @@
 div.terms {
     color: white;
 }
-
