@@ -30,13 +30,7 @@ const greetings = [
     "Greetings! What DayZ questions do you have?",
 ];
 
-const inappropriateKeywords = [
-    "porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard",
-    "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy",
-    "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker",
-    "asshole", "bastard", "moron", "anal"
-];
-
+const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard", "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy", "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker", "asshole", "bastard", "moron", "idiot", "anal"];
 let isBotTyping = false;
 let inappropriateWordCount = 0; // Variable to count inappropriate words
 
@@ -135,30 +129,36 @@ async function handleUserInput() {
             // First check questions
             let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
 
-            let checkKeywords = false;
             if (checkQuestions.boolValue) {
                 numberOfLetters = checkQuestions.intValue;
-            } else { // If no question found in JSONs, continue to keyword pairs and hope for the best
-                checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
-                if (checkKeywords.boolValue) {
-                    numberOfLetters = checkKeywords.intValue;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                if (numberOfLetters !== 0) {
+                    await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
                 }
+                isBotTyping = false;
+                return;
+            }
+
+            // If no question found in JSONs, continue to keyword pairs and hope for the best
+            let checkKeywords = await findBestAnswer(question, jsonKeywordsFiles);
+            if (checkKeywords.boolValue) {
+                numberOfLetters = checkKeywords.intValue;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                if (numberOfLetters !== 0) {
+                    await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
+                }
+                isBotTyping = false;
+                return;
             }
 
             // If all fails, give user some random input
-            if (!checkQuestions.boolValue && !checkKeywords.boolValue) {
-                const randomResponse = getRandomResponse();
-                numberOfLetters = countLetters(randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
-                await simulateBotTyping(50, randomResponse);
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
+            const randomResponse = getRandomResponse();
+            numberOfLetters = countLetters(randomResponse);
+            await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
+            await simulateBotTyping(50, randomResponse);
+            await new Promise(resolve => setTimeout(resolve, 1000));
         } catch (error) {
             console.error("An error occurred:", error);
-        }
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters !== 0) {
-            await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
     }
@@ -261,9 +261,9 @@ async function checkJsonQuestions(question, jsonCategories) {
         }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
-        return false; // Return false in case of error
+        return { boolValue: false }; // Return false in case of error
     }
-    return false; // No matches found in questions
+    return { boolValue: false }; // No matches found in questions
 }
 
 async function findBestAnswer(question, keywordsCategories) {
@@ -322,17 +322,17 @@ async function findBestAnswer(question, keywordsCategories) {
         if (bestAnswer) {
             await simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
-            return [numberOfLetters, true];
+            return { intValue: numberOfLetters, boolValue: true };
         } else {
             // Only show a random response if no best answer is found
-            const fallbackResponse = randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            const fallbackResponse = getRandomResponse();
             await simulateBotTyping(50, fallbackResponse);
             let numberOfLetters = countLetters(fallbackResponse);
-            return [numberOfLetters, false];
+            return { intValue: numberOfLetters, boolValue: false };
         }
     } catch (error) {
         console.error("Error in findBestAnswer:", error);
-        return [0, false];
+        return { intValue: 0, boolValue: false };
     }
 }
 
