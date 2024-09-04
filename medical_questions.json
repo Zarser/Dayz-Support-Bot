@@ -1,66 +1,66 @@
 [
     {
-        "keywords": "threats", "dangers", "risks",
+        "keywords": ["threats", "dangers", "risks"],
         "question": "What threats are present in DayZ apart from starving, dehydration, and zombies?",
         "answer": "In addition to starving, dehydration, and zombies, DayZ presents several other threats: Cholera, Cold, Influenza (Flu), Salmonella, Chemical Poisoning, Heart Attack, Hemolytic Reaction, and Brain Damage."
     },
     {
-        "keywords": "diseases", "sickness", "illnesses",
+        "keywords": ["diseases", "sickness", "illnesses"],
         "question": "What diseases are present in DayZ?",
         "answer": "DayZ features various diseases including Cholera, Cold, Influenza (Flu), Salmonella, Chemical Poisoning, Heart Attack, Hemolytic Reaction, and Brain Damage."
     },
     {
-        "keywords": "cholera", "cholera treatment",
+        "keywords": ["cholera", "cholera treatment"],
         "question": "What is cholera and how do I treat it?",
         "answer": "Cholera is a disease caused by drinking contaminated water or eating with dirty hands. Symptoms include vomiting. The treatment for Cholera is Tetracycline Pills."
     },
     {
-        "keywords": "cold", "cold treatment",
+        "keywords": ["cold", "cold treatment"],
         "question": "What is Cold and how do I treat it?",
         "answer": "Cold is a viral illness caused by prolonged exposure to low temperatures, rain, or contact with an infected survivor. Symptoms include sneezing and coughing. Treatment includes Tetracycline Pills."
     },
     {
-        "keywords": "influenza", "flu", "flu treatment",
+        "keywords": ["influenza", "flu", "flu treatment"],
         "question": "What is influenza (Flu) and how do I treat it?",
         "answer": "Influenza (Flu) is a viral infection caused by prolonged exposure to cold conditions or contact with infected individuals. Symptoms include sneezing and coughing. Treatment involves Tetracycline Pills."
     },
     {
-        "keywords": "salmonella", "salmonella treatment",
+        "keywords": ["salmonella", "salmonella treatment"],
         "question": "What is salmonella and how do I treat it?",
         "answer": "Salmonella is a disease caused by consuming undercooked or raw meat. Symptoms include vomiting. Treatment involves Charcoal Tablets."
     },
     {
-        "keywords": "chemical poisoning", "poisoning treatment",
+        "keywords": ["chemical poisoning", "poisoning treatment"],
         "question": "What is chemical poisoning and how do I treat it?",
         "answer": "Chemical Poisoning results from ingesting substances like Alcoholic Tincture, Gasoline, or Disinfectant Spray. Symptoms include dehydration and blood loss. Treatment is Charcoal Tablets."
     },
     {
-        "keywords": "heart attack", "heart attack treatment",
+        "keywords": ["heart attack", "heart attack treatment"],
         "question": "What is a heart attack and how do I treat it?",
         "answer": "A heart attack is caused by sudden blood loss or extreme shock. Symptoms include unconsciousness, health damage, and possibly death. Treatment is Epinephrine Auto-Injector."
     },
     {
-        "keywords": "hemolytic reaction", "hemolytic",
+        "keywords": ["hemolytic reaction", "hemolytic"],
         "question": "What is a hemolytic reaction and how do I treat it?",
         "answer": "A hemolytic reaction occurs when receiving incompatible blood. Symptoms include blood loss and health damage. There is no treatment for this reaction."
     },
     {
-        "keywords": "brain damage", "brain injury",
+        "keywords": ["brain damage", "brain injury"],
         "question": "What is brain damage and how do I treat it?",
         "answer": "Brain Damage results from consuming Human Steak or Meat. Symptoms include uncontrollable laughter and tremors. The only 'treatment' is to die or commit suicide."
     },
     {
-        "keywords": "broken leg", "fractured leg", "leg injury",
+        "keywords": ["broken leg", "fractured leg", "leg injury"],
         "question": "My leg is broken. What should I do?",
         "answer": "A broken leg will show a special symbol on your HUD, and you will be forced to lie prone. Standing up will cause shock damage and unconsciousness. Actions like climbing or swimming are not possible. Use Codeine Pills or Morphine Auto-Injector to extend walking time. To fix the fracture, craft a Splint with 4 Rags and 2 Short Sticks. Healing takes time and requires max health, max blood, at least 4000 energy, and 2500 hydration. Recovery is faster with a splint and slower without."
     },
     {
-        "keywords": "fractured leg", "broken leg",
+        "keywords": ["fractured leg", "broken leg"],
         "question": "I got a fractured leg. What should I do?",
         "answer": "A fractured leg will show a special symbol on your HUD and you will be forced to lie prone. Standing up will result in shock damage and unconsciousness. Actions like climbing or swimming are not possible. Use Codeine Pills or Morphine Auto-Injector to extend walking time. To fix the fracture, craft a Splint with 4 Rags and 2 Short Sticks. Healing requires max health, max blood, at least 4000 energy, and 2500 hydration. Recovery is faster with a splint and slower without."
     },
     {
-        "keywords": "broken leg", "leg injury",
+        "keywords": ["broken leg", "leg injury"],
         "question": "My leg is messed up. What should I do?",
         "answer": "A broken leg will show a special symbol on your HUD, and you will be forced to lie prone. Standing up will cause shock damage and unconsciousness. Actions like climbing or swimming are not possible. Use Codeine Pills or Morphine Auto-Injector to extend walking time. To fix the fracture, craft a Splint with 4 Rags and 2 Short Sticks. Healing takes time and requires max health, max blood, at least 4000 energy, and 2500 hydration. Recovery is faster with a splint and slower without."
     }
