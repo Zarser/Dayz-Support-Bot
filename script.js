@@ -260,16 +260,18 @@ async function checkJsonQuestions(question, jsonCategories) {
 
 async function findBestAnswer(question, keywordsCategories) {
     try {
+        console.log("Finding best answer for:", question);
         let bestAnswer = null;
         let bestMatchScore = 0;
 
         for (const keyword of keywordsCategories) {
             const response = await fetch(`./${keyword}.json`);
             if (!response.ok) {
-                throw new Error(`Failed to fetch ./${keyword}.json: ${response.status}`);
+                console.error(`Failed to fetch ./${keyword}.json: ${response.status}`);
+                continue;
             }
             const jsonText = await response.text();
-            console.log("JSON Text:", jsonText); // Log raw JSON for debugging
+            console.log("JSON Text:", jsonText);
 
             try {
                 const jsonArray = JSON.parse(jsonText);
@@ -277,29 +279,29 @@ async function findBestAnswer(question, keywordsCategories) {
                     const keywordArray = Array.isArray(jsonField["keywords"]) ? jsonField["keywords"] : [jsonField["keywords"]];
                     let matchScore = 0;
 
-                    // Convert question to lowercase for case-insensitive matching
                     const lowerCaseQuestion = question.toLowerCase();
 
-                    // Check for exact matches and partial matches in keywords
                     keywordArray.forEach(keywordCombo => {
-                        const lowerCaseKeywordCombo = keywordCombo.toLowerCase();
-                        if (lowerCaseQuestion.includes(lowerCaseKeywordCombo)) {
-                            matchScore += 10; // Exact match score
-                        } else {
-                            const comboKeywordsArray = lowerCaseKeywordCombo.split(' ');
-                            comboKeywordsArray.forEach(keyword => {
-                                if (lowerCaseQuestion.includes(keyword)) {
-                                    matchScore += 5; // Partial match score
-                                }
-                            });
-                        }
-                    });
+    const lowerCaseKeywordCombo = keywordCombo.toLowerCase();
+    const comboKeywordsArray = lowerCaseKeywordCombo.split(' ');
+    let comboMatch = comboKeywordsArray.every(keyword => lowerCaseQuestion.includes(keyword));
 
-                    // Update the best answer based on the match score
+    if (comboMatch) {
+        matchScore += 10;
+    } else {
+        comboKeywordsArray.forEach(keyword => {
+            if (lowerCaseQuestion.includes(keyword)) {
+                matchScore += 5;
+            }
+        });
+    }
+});
+
+                    // Update best answer if the current match score is better
                     if (matchScore > bestMatchScore) {
                         bestMatchScore = matchScore;
                         bestAnswer = jsonField["answer"];
-                        console.log("Best answer:", bestAnswer);
+                        console.log("Best answer updated to:", bestAnswer);
                     }
                 }
             } catch (jsonParseError) {
@@ -311,19 +313,16 @@ async function findBestAnswer(question, keywordsCategories) {
         if (bestAnswer) {
             await simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
-            const result = [numberOfLetters, true];
-            result.intValue = result[0];
-            result.boolValue = result[1];
-            return result;
+            return [numberOfLetters, true];
         } else {
-            const result = [0, false];
-            return result;
+            return [0, false];
         }
     } catch (error) {
-        console.error("Error loading or parsing JSON:", error);
+        console.error("Error in findBestAnswer:", error);
+        return [0, false];
     }
-    return [0, false];
 }
+
 
 
 // Helper function to count letters
