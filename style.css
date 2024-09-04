@@ -14,24 +14,32 @@
 }
 
 .user-input {
+    display: flex;
     padding: 10px;
-    display: flex; /* Use flexbox to align the input and buttons */
-    justify-content: space-between; /* Ensure proper spacing between input and buttons */
-    align-items: center; /* Align items vertically in the center */
+    justify-content: space-between;
+    align-items: center;
 }
 
 .user-input .form-control {
-    flex-grow: 1; /* Allow the input field to take up available space */
-    margin-right: 10px; /* Add some space between the input field and buttons */
+    flex-grow: 1;
+    margin-right: 10px;
+    height: 40px; /* Ensuring consistent height */
+    box-sizing: border-box;
 }
 
 .btn-group {
     display: flex;
-    align-items: center; /* Ensure buttons are vertically aligned with the input field */
+    align-items: center;
 }
 
 .btn-group .btn {
-    margin-left: 5px; /* Add some spacing between the buttons */
+    margin-left: 5px;
+    height: 40px; /* Match the height of the input field */
+    padding-top: 0; /* Remove extra padding */
+    padding-bottom: 0; /* Remove extra padding */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .chat-box {
@@ -63,9 +71,9 @@
 }
 
 .bot-avatar {
-    width: 30px; 
-    height: auto; 
-    margin-right: 5px; 
+    width: 30px;
+    height: auto;
+    margin-right: 5px;
 }
 
 .chatbubble {
@@ -89,8 +97,8 @@
 .popover-content {
     display: none;
     position: absolute;
-    top: 10px; /* Adjusted to be 10px lower */
-    left: 40px; /* Adjusted to be 10px from the side */
+    top: 10px;
+    left: 40px;
     background-color: #f9f9f923;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px;
@@ -99,8 +107,8 @@
 }
 
 .report-button {
-    font-size: 8px; /* Adjust the font size as needed */
-    padding: 4px 8px; /* Adjust the padding as needed */
+    font-size: 8px;
+    padding: 4px 8px;
 }
 
 .show {
