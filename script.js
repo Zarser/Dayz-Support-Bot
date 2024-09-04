@@ -21,6 +21,7 @@ const randomResponses = [
     "That's an interesting question for which I do not have an answer yet. Please submit any questions you didn't have an answer for so that we can fix it using the \"REPORT\" button!",
     "I'm still learning, but I'll do my best to help. If I am not providing the correct answer for your question, please report it using the \"REPORT\" button!",
 ];
+
 const greetings = [
     "Greetings, survivor!",
     "Hello there, adventurer!",
@@ -28,7 +29,14 @@ const greetings = [
     "Hey, survivor! Ready to dive into some DayZ knowledge?",
     "Greetings! What DayZ questions do you have?",
 ];
-const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard", "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy", "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker", "asshole", "bastard", "moron", "idiot", "anal"];
+
+const inappropriateKeywords = [
+    "porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard",
+    "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy",
+    "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker",
+    "asshole", "bastard", "moron", "anal"
+];
+
 let isBotTyping = false;
 let inappropriateWordCount = 0; // Variable to count inappropriate words
 
@@ -327,10 +335,6 @@ async function findBestAnswer(question, keywordsCategories) {
         return [0, false];
     }
 }
-
-
-
-
 
 // Helper function to count letters
 function countLetters(sentence) {
