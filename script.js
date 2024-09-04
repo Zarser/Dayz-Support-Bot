@@ -30,7 +30,7 @@ const greetings = [
     "Greetings! What DayZ questions do you have?",
 ];
 
-const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard", "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy", "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker", "asshole", "bastard", "moron", "idiot", "anal"];
+const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard", "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy", "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker", "asshole", "bastard", "moron", "idiot", "anal", "fag", "faggot", "gay", "homosexual","mf", "suck my balls", "eat shit",];
 let isBotTyping = false;
 let inappropriateWordCount = 0; // Variable to count inappropriate words
 
