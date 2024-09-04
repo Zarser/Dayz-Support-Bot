@@ -27,9 +27,6 @@ const greetings = [
     "Welcome, traveler! How can I assist you today?",
     "Hey, survivor! Ready to dive into some DayZ knowledge?",
     "Greetings! What DayZ questions do you have?",
-    "Wazzzzup!?!?",
-    "Y0! I CANT help you with cheating but maybe other questions.",
-    "HOORAY! Problem in paradise?",
 ];
 
 const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard", "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy", "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker", "asshole", "bastard", "moron", "idiot", "anal", "fag", "faggot", "gay", "homosexual","mf", "suck my balls", "eat shit"];
@@ -60,7 +57,7 @@ async function handleUserInput() {
 
     // Check for inappropriate keywords
     for (const keyword of inappropriateKeywords) {
-        const keywordRegex = new RegExp(`\\b${keyword}\\b`, 'i');
+        const keywordRegex = new RegExp(\\b${keyword}\\b, 'i');
         if (keywordRegex.test(userMessage)) {
             containsInappropriateKeyword = true;
             inappropriateWordCount++;
@@ -91,7 +88,7 @@ async function handleUserInput() {
     }
 
     // Handle greetings
-    const greetingRegex = new RegExp(`\\b(hi|hello|hey|sup|what's up|yo|zup)\\b`, 'i');
+    const greetingRegex = new RegExp(\\b(hi|hello|hey|sup|what's up)\\b, 'i');
     if (greetingRegex.test(userMessage)) {
         const randomGreeting = getRandomGreeting();
         displayUserMessage(userMessage);
@@ -154,16 +151,16 @@ userInput.addEventListener("keydown", function(event) {
 });
 
 function displayUserMessage(message, style = "") {
-    const userMessage = `<div class="user-message" style="color: white;"><strong>Creature</strong>: <span style="${style}">${message}</span></div>`;
+    const userMessage = <div class="user-message" style="color: white;"><strong>Creature</strong>: <span style="${style}">${message}</span></div>;
     chatBox.innerHTML += userMessage;
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function displayBotMessage(message) {
-    const botMessage = `<div class="bot-message">
+    const botMessage = <div class="bot-message">
     <img src="bot.png" alt="Robot" class="bot-avatar">
     <span class="bot-text">${message}</span>
-</div>`;
+</div>;
     chatBox.innerHTML += botMessage;
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -185,7 +182,7 @@ async function simulateBotTyping(delayForWords, botResponse) {
 
     typingInterval = setInterval(() => {
         if (currentCharIndex <= botResponse.length) {
-            typingElement.innerHTML = `<span class="typing-color">${botResponse.substring(0, currentCharIndex)}</span>`;
+            typingElement.innerHTML = <span class="typing-color">${botResponse.substring(0, currentCharIndex)}</span>;
             chatBox.scrollTop = chatBox.scrollHeight;
             currentCharIndex++;
         } else {
@@ -209,9 +206,9 @@ async function simulateBotTyping(delayForWords, botResponse) {
 async function checkJsonQuestions(question, jsonCategories) {
     try {
         for (const category of jsonCategories) {
-            const response = await fetch(`${category}.json`);
+            const response = await fetch(${category}.json);
             if (!response.ok) {
-                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
+                throw new Error(Failed to fetch ${category}.json: ${response.status});
             }
             const jsonText = await response.text();
             try {
@@ -238,24 +235,38 @@ async function findBestAnswer(question, keywordsCategories) {
         let bestAnswer = null;
         let bestMatchScore = 0;
 
-        for (const category of keywordsCategories) {
-            const response = await fetch(`${category}.json`);
+        for (const keyword of keywordsCategories) {
+            const response = await fetch(./${keyword}.json);
             if (!response.ok) {
-                throw new Error(`Failed to fetch ${category}.json: ${response.status}`);
+                console.error(Failed to fetch ./${keyword}.json: ${response.status});
+                continue;
             }
             const jsonText = await response.text();
+
             try {
                 const jsonArray = JSON.parse(jsonText);
                 for (const jsonField of jsonArray) {
+                    const keywordArray = Array.isArray(jsonField["keywords"]) ? jsonField["keywords"] : [jsonField["keywords"]];
                     let matchScore = 0;
+                    const lowerCaseQuestion = question.toLowerCase();
 
-                    if (jsonField.keywords.some(keyword => question.includes(keyword.toLowerCase()))) {
-                        matchScore += 1;
-                    }
+                    keywordArray.forEach(keywordCombo => {
+                        const lowerCaseKeywordCombo = keywordCombo.toLowerCase();
+                        if (lowerCaseQuestion.includes(lowerCaseKeywordCombo)) {
+                            matchScore += 10;
+                        } else {
+                            const comboKeywordsArray = lowerCaseKeywordCombo.split(' ');
+                            comboKeywordsArray.forEach(keyword => {
+                                if (lowerCaseQuestion.includes(keyword)) {
+                                    matchScore += 5;
+                                }
+                            });
+                        }
+                    });
 
                     if (matchScore > bestMatchScore) {
                         bestMatchScore = matchScore;
-                        bestAnswer = jsonField.answer;
+                        bestAnswer = jsonField["answer"];
                     }
                 }
             } catch (jsonParseError) {
@@ -263,28 +274,29 @@ async function findBestAnswer(question, keywordsCategories) {
             }
         }
 
-        if (bestAnswer !== null) {
+        if (bestAnswer) {
             await simulateBotTyping(50, bestAnswer);
             let numberOfLetters = countLetters(bestAnswer);
             return { intValue: numberOfLetters, boolValue: true };
+        } else {
+            const fallbackResponse = getRandomResponse();
+            await simulateBotTyping(50, fallbackResponse);
+            let numberOfLetters = countLetters(fallbackResponse);
+            return { intValue: numberOfLetters, boolValue: false };
         }
     } catch (error) {
-        console.error("Error loading or parsing JSON:", error);
+        console.error("Error in findBestAnswer:", error);
+        return { intValue: 0, boolValue: false };
     }
-    return { boolValue: false }; // No matches found in keywords
 }
 
-function countLetters(text) {
-    return text.replace(/\s/g, "").length;
+function countLetters(sentence) {
+    return sentence.length;
 }
 
-function cleanStringsKeepSpaces(inputString) {
-    return inputString
-        .replace(/[^a-zA-Z\s]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
+function cleanStringsKeepSpaces(input) {
+    return input.replace(/[^a-zA-Z\s]/g, '');
 }
-
 
 popoverButton.addEventListener("click", () => {
     popoverContent.classList.toggle("show");
