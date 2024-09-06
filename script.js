@@ -236,21 +236,28 @@ async function checkJsonQuestions(question, jsonCategories) {
             if (!response.ok) {
                 throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
             }
+
+            // Parse JSON response
             const jsonArray = await response.json();
+
             for (const jsonField of jsonArray) {
                 if (question === cleanStringsKeepSpaces(jsonField["question"]).toLowerCase()) {
-                    // If question matches, simulate bot typing and return result
                     await simulateBotTyping(50, jsonField["answer"]);
-                    const numberOfLetters = countLetters(jsonField["answer"]);
-                    return { intValue: numberOfLetters, boolValue: true };
+                    let numberOfLetters = countLetters(jsonField["answer"]);
+                    const result = [numberOfLetters, true];
+                    result.intValue = result[0];
+                    result.boolValue = result[1];
+                    return result; // Match found => return true immediately
                 }
             }
         }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
+        return false; // Return false in case of error
     }
-    return { intValue: 0, boolValue: false }; // Return false if no match is found
+    return false; // No matches found in questions
 }
+
 
 async function findBestAnswer(question, keywordsCategories) {
     try {
