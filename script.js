@@ -257,56 +257,27 @@ if (!response.ok) {
 
 async function findBestAnswer(question, keywordsCategories) {
     try {
-        let bestAnswer = null;
-        let bestMatchScore = 0;
-        for (const keyword of keywordsCategories) {
-            const response = await fetch(`./${category}.json`);
-if (!response.ok) {
-    throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
-}
+        for (const keywordFile of keywordsCategories) {
+            const response = await fetch(`./${keywordFile}.json`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${keywordFile}.json: ${response.status} - ${response.statusText}`);
+            }
             const jsonArray = await response.json();
             for (const jsonField of jsonArray) {
-                const keywordCombinations = jsonField["keyword"].toLowerCase().split('+');
-                let match = false; // Assume no match
-                for (const keywordInCombinations of keywordCombinations) {				// first go through the combinations
-					const regex = new RegExp(`\\b${keywordInCombinations}\\b`);
-					if (regex.test(question)) {
-						match = true;
-						break;
-					}
-				}
-				if (!match) {															// if no matches happen, go through single keywords and match
-					for (const keywordInCombinations of keywordCombinations) {			
-						let keywordArray = keywordInCombinations.split(" ");
-						for (const keyword of keywordArray) {
-							const regex = new RegExp(`\\b${keyword}\\b`);
-							if (regex.test(question)) {
-								match = true;
-								break;
-							}
-						}
-					}
-				}
-                if (match) {															// if match, create a match score
-                    const matchScore = checkQuestionMatch(question, jsonField["keyword"]);
-                    if (matchScore > bestMatchScore) {
-                        bestMatchScore = matchScore;
-                        bestAnswer = jsonField["answer"];
-						console.log("Best answer:" + bestAnswer);
+                const keywordsArray = jsonField["keywords"];
+                for (const keyword of keywordsArray) {
+                    const keywordRegex = new RegExp(`\\b${keyword.trim().toLowerCase()}\\b`, 'i');
+                    if (keywordRegex.test(question)) {
+                        await simulateBotTyping(50, jsonField["answer"]);
+                        let numberOfLetters = countLetters(jsonField["answer"]);
+                        const result = [numberOfLetters, true];
+                        result.intValue = result[0];
+                        result.boolValue = result[1];
+                        return result;
                     }
                 }
             }
         }
-        if (bestAnswer) {																// if best answer is found, return it.
-            simulateBotTyping(50, bestAnswer);
-            let numberOfLetters = countLetters(bestAnswer);
-            const result = [numberOfLetters, true];
-            result.intValue = result[0];
-            result.boolValue = result[1];
-            return result;
-        } else {
-			const result = [0, false];
-		}
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
     }
