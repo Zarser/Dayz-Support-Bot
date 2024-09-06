@@ -233,26 +233,23 @@ async function checkJsonQuestions(question, jsonCategories) {
     try {
         for (const category of jsonCategories) {
             const response = await fetch(`./${category}.json`);
-if (!response.ok) {
-    throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
-}
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${category}.json: ${response.status} - ${response.statusText}`);
+            }
             const jsonArray = await response.json();
             for (const jsonField of jsonArray) {
                 if (question === cleanStringsKeepSpaces(jsonField["question"]).toLowerCase()) {
-                    simulateBotTyping(50, jsonField["answer"]);
-                    let numberOfLetters = countLetters(jsonField["answer"]);
-                    const result = [numberOfLetters, true];
-                    result.intValue = result[0];
-                    result.boolValue = result[1];
-                    return result; // Match found => return true immediately
+                    // If question matches, simulate bot typing and return result
+                    await simulateBotTyping(50, jsonField["answer"]);
+                    const numberOfLetters = countLetters(jsonField["answer"]);
+                    return { intValue: numberOfLetters, boolValue: true };
                 }
             }
         }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
-        return false; // Return false in case of error
     }
-    return false; // No matches found in questions
+    return { intValue: 0, boolValue: false }; // Return false if no match is found
 }
 
 async function findBestAnswer(question, keywordsCategories) {
@@ -268,12 +265,10 @@ async function findBestAnswer(question, keywordsCategories) {
                 for (const keyword of keywordsArray) {
                     const keywordRegex = new RegExp(`\\b${keyword.trim().toLowerCase()}\\b`, 'i');
                     if (keywordRegex.test(question)) {
+                        // If keyword matches, simulate bot typing and return result
                         await simulateBotTyping(50, jsonField["answer"]);
-                        let numberOfLetters = countLetters(jsonField["answer"]);
-                        const result = [numberOfLetters, true];
-                        result.intValue = result[0];
-                        result.boolValue = result[1];
-                        return result;
+                        const numberOfLetters = countLetters(jsonField["answer"]);
+                        return { intValue: numberOfLetters, boolValue: true };
                     }
                 }
             }
@@ -281,8 +276,9 @@ async function findBestAnswer(question, keywordsCategories) {
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
     }
-    return [0, false];
+    return { intValue: 0, boolValue: false }; // Return false if no match is found
 }
+
 
 function checkQuestionMatch(userQuestion, keywordCombinationsString) {
     let occurrences = 0;
