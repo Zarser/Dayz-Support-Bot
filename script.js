@@ -106,7 +106,7 @@ async function handleUserInput() {
     isBotTyping = true;
 
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
-    const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
+    const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical","keywords_general_questions"];
     let question = userInput.value.trim();
 
     if (question !== "") {
