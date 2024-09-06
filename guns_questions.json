@@ -6,7 +6,7 @@
     },
     {
         "question": "What is the best sniper rifle?",
-        "keywords": ["best", "sniper rifle", "damage", "Vanilla"],
+        "keywords": ["best sniper", "sniper rifle", "damage", "Vanilla",],
         "answer": "Based on damage, in the Vanilla version the best sniper rifle is the VSD."
     },
     {
