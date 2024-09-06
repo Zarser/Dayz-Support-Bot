@@ -29,7 +29,7 @@ const greetings = [
 ];
 const inappropriateKeywords = ["porn", "sex", "racism", "politics", "jew", "nigger", "idiot", "morron", "retard", "cp", "shut up", "stfu", "fuck off", "bite me", "suck my dick", "dick", "pussy", "nigga", "nigg", "N word", "dickhead", "motherfucker", "dick head", "mother fucker", "asshole", "bastard", "moron", "idiot", "anal"];
 let isBotTyping = false;
-let inappropriateWordCount = 0; // Variable to count inappropriate words
+let inappropriateWordCount = 0; 
 
 function getRandomGreeting() {
     const randomIndex = Math.floor(Math.random() * greetings.length);
@@ -74,7 +74,7 @@ async function handleUserInput() {
         }
 
         displayUserMessage("Message deleted", "color: red; font-weight: bold;");
-        userInput.value = "";
+        userInput.value = ""; 
         isBotTyping = true;
         const inappropriateResponses = [
             "That wasn't very nice...",
@@ -106,7 +106,7 @@ async function handleUserInput() {
     isBotTyping = true;
 
     const jsonCategoriesFiles = ["ammo_questions", "general_questions", "guns_questions", "medical_questions"];
-    const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical","keywords_general_questions"];
+    const jsonKeywordsFiles = ["keywords_ammo", "keywords_ar", "keywords_medical"];
     let question = userInput.value.trim();
 
     if (question !== "") {
@@ -114,9 +114,11 @@ async function handleUserInput() {
         userInput.value = "";
         let numberOfLetters = 0;
         question = cleanStringsKeepSpaces(question).toLowerCase();
+
         try {
             let checkQuestions = await checkJsonQuestions(question, jsonCategoriesFiles);
             let checkKeywords = false;
+
             if (checkQuestions.boolValue) {
                 numberOfLetters = checkQuestions.intValue;
             } else {
@@ -136,8 +138,8 @@ async function handleUserInput() {
         } catch (error) {
             console.error("An error occurred:", error);
         }
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        if (numberOfLetters !== 0) {
+
+        if (numberOfLetters != 0) {
             await new Promise(resolve => setTimeout(resolve, 70 * numberOfLetters));
         }
         isBotTyping = false;
@@ -145,10 +147,10 @@ async function handleUserInput() {
 }
 
 sendBtn.addEventListener("click", handleUserInput);
-userInput.addEventListener("keydown", function (event) {
+userInput.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
-        event.preventDefault();
-        handleUserInput();
+        event.preventDefault(); 
+        handleUserInput(); 
         console.log("Send button clicked");
     }
 });
@@ -227,29 +229,27 @@ async function checkJsonQuestions(question, jsonCategories) {
         }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
-        return { boolValue: false };
+        return false;
     }
-    return { boolValue: false };
+    return false;
 }
 
-async function findBestAnswer(question, jsonKeywords) {
+async function findBestAnswer(question, keywordsCategories) {
     try {
-        for (const keywordFile of jsonKeywords) {
+        for (const keywordFile of keywordsCategories) {
             const response = await fetch(`./${keywordFile}.json`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch ${keywordFile}.json: ${response.status} - ${response.statusText}`);
             }
             const jsonArray = await response.json();
-
             for (const jsonField of jsonArray) {
                 const keywordsArray = jsonField["keywords"];
-                
-                // Check if any keyword in the array matches the question using regex
                 for (const keyword of keywordsArray) {
                     const keywordRegex = new RegExp(`\\b${keyword.trim().toLowerCase()}\\b`, 'i');
                     if (keywordRegex.test(question)) {
                         await simulateBotTyping(50, jsonField["answer"]);
-                        const result = [countLetters(jsonField["answer"]), true];
+                        let numberOfLetters = countLetters(jsonField["answer"]);
+                        const result = [numberOfLetters, true];
                         result.intValue = result[0];
                         result.boolValue = result[1];
                         return result;
@@ -263,11 +263,22 @@ async function findBestAnswer(question, jsonKeywords) {
     return [0, false];
 }
 
-
-function cleanStringsKeepSpaces(str) {
-    return str.replace(/[^\w\s]/gi, '').replace(/\s+/g, ' ');
+function countLetters(string) {
+    return string.replace(/\s/g, "").length;
 }
 
-function countLetters(str) {
-    return str.replace(/\s/g, '').length;
+function cleanStringsKeepSpaces(string) {
+    return string.replace(/[^\w\s]/gi, "").trim();
 }
+
+popoverButton.addEventListener("click", function() {
+    if (popoverContent.style.display === "none" || popoverContent.style.display === "") {
+        popoverContent.style.display = "block";
+    } else {
+        popoverContent.style.display = "none";
+    }
+});
+
+reportButton.addEventListener("click", function() {
+    alert("Your report has been submitted. We'll address the issue soon. Thank you!");
+});
