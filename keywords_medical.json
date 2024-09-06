@@ -1,14 +1,6 @@
 [
     {
-        "keywords": "sickness",
-        "answer": "Here is a list of the threats: Cholera, Cold, Influenza (Flu), Salmonella, Chemical Poisoning, Heart Attack, Hemolytic Reaction, Brain Disease (Permanent)."
-    },
-    {
-        "keywords": "disease",
-        "answer": "Here is a list of the threats: Cholera, Cold, Influenza (Flu), Salmonella, Chemical Poisoning, Heart Attack, Hemolytic Reaction, Brain Disease (Permanent)."
-    },
-    {
-        "keywords": "diseases",
+        "keywords": ["sickness","sick","ill","disease","diseases"]
         "answer": "Here is a list of the threats: Cholera, Cold, Influenza (Flu), Salmonella, Chemical Poisoning, Heart Attack, Hemolytic Reaction, Brain Disease (Permanent)."
     },
     {
