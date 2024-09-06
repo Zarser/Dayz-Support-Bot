@@ -263,7 +263,10 @@ async function findBestAnswer(question, keywordsCategories) {
             for (const jsonField of jsonArray) {
                 const keywordsArray = jsonField["keywords"];
                 for (const keyword of keywordsArray) {
-                    const keywordRegex = new RegExp(`\\b${keyword.trim().toLowerCase()}\\b`, 'i');
+                    // Escape any special characters in the keyword for regex
+                    const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    // Build a regular expression to match the keyword in the question
+                    const keywordRegex = new RegExp(`\\b${escapedKeyword}\\b`, 'i');
                     if (keywordRegex.test(question)) {
                         // If keyword matches, simulate bot typing and return result
                         await simulateBotTyping(50, jsonField["answer"]);
@@ -278,6 +281,7 @@ async function findBestAnswer(question, keywordsCategories) {
     }
     return { intValue: 0, boolValue: false }; // Return false if no match is found
 }
+
 
 
 function checkQuestionMatch(userQuestion, keywordCombinationsString) {
