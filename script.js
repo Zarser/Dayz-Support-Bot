@@ -282,8 +282,6 @@ async function findBestAnswer(question, keywordsCategories) {
     return { intValue: 0, boolValue: false }; // Return false if no match is found
 }
 
-
-
 function checkQuestionMatch(userQuestion, keywordCombinationsString) {
     let occurrences = 0;
 	// Check combinations of keywords
