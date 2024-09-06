@@ -234,30 +234,35 @@ async function checkJsonQuestions(question, jsonCategories) {
 
 async function findBestAnswer(question, jsonKeywords) {
     try {
-        for (const keywords of jsonKeywords) {
-            const response = await fetch(`./${keywords}.json`);
+        for (const keywordFile of jsonKeywords) {
+            const response = await fetch(`./${keywordFile}.json`);
             if (!response.ok) {
-                throw new Error(`Failed to fetch ${keywords}.json: ${response.status} - ${response.statusText}`);
+                throw new Error(`Failed to fetch ${keywordFile}.json: ${response.status} - ${response.statusText}`);
             }
             const jsonArray = await response.json();
+
             for (const jsonField of jsonArray) {
-                const keywordsArray = jsonField.keywords.map(keyword => cleanStringsKeepSpaces(keyword).toLowerCase());
-                if (keywordsArray.some(keyword => question.includes(keyword))) {
-                    simulateBotTyping(50, jsonField["answer"]);
-                    let numberOfLetters = countLetters(jsonField["answer"]);
-                    const result = [numberOfLetters, true];
-                    result.intValue = result[0];
-                    result.boolValue = result[1];
-                    return result;
+                const keywordsArray = jsonField["keywords"];
+                
+                // Check if any keyword in the array matches the question using regex
+                for (const keyword of keywordsArray) {
+                    const keywordRegex = new RegExp(`\\b${keyword.trim().toLowerCase()}\\b`, 'i');
+                    if (keywordRegex.test(question)) {
+                        await simulateBotTyping(50, jsonField["answer"]);
+                        const result = [countLetters(jsonField["answer"]), true];
+                        result.intValue = result[0];
+                        result.boolValue = result[1];
+                        return result;
+                    }
                 }
             }
         }
     } catch (error) {
         console.error("Error loading or parsing JSON:", error);
-        return { boolValue: false };
     }
-    return { boolValue: false };
+    return [0, false];
 }
+
 
 function cleanStringsKeepSpaces(str) {
     return str.replace(/[^\w\s]/gi, '').replace(/\s+/g, ' ');
